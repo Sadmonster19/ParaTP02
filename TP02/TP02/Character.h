@@ -15,6 +15,10 @@ public:
 protected:
     int positionX;
     int positionY;
+
+	virtual bool move(int x, int y) = 0;
+	virtual void findBestPath() = 0;
+
 public:
     
 };

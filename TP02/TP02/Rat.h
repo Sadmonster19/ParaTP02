@@ -14,7 +14,8 @@ public:
     ~Rat() = default;
 
 private:
-
+	bool move(int x, int y) override;
+	void findBestPath() override;
 };
 
 #endif //RAT_H
