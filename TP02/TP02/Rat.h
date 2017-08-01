@@ -14,8 +14,12 @@ public:
     ~Rat() = default;
 
 private:
+
+	int panicLevel = 0;
+
 	bool move(Position) override;
-	void findBestPath() override;
+	void findBestPath(Position) override;
+	Position findClosestCheese();
 };
 
 #endif //RAT_H

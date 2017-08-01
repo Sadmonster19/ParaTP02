@@ -11,6 +11,12 @@ bool Rat::move(Position pos)
 	return false;
 }
 
-void Rat::findBestPath()
+void Rat::findBestPath(Position pos)
 {
+
+}
+
+Position Rat::findClosestCheese()
+{
+	return Position(0, 0);
 }

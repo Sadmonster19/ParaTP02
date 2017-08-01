@@ -10,6 +10,8 @@ struct Position
 {
 	int x;
 	int y;
+
+	Position(int _x, int _y) : x{ _x }, y{ _y } {}
 };
 
 class Character
@@ -24,7 +26,7 @@ protected:
 	vector<Position> bestPath;
 
 	virtual bool move(Position) = 0;
-	virtual void findBestPath() = 0;
+	virtual void findBestPath(Position) = 0;
 
 public:
     
