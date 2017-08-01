@@ -5,7 +5,12 @@ Rat::Rat(int positionX_, int positionY_)
 {
 }
 
-bool Rat::move(int x, int y)
+bool Rat::move(Position pos)
 {
+	//TODO: ASK MAP TO MOVE THERE
 	return false;
+}
+
+void Rat::findBestPath()
+{
 }

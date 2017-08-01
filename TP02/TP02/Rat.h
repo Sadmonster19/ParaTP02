@@ -14,7 +14,7 @@ public:
     ~Rat() = default;
 
 private:
-	bool move(int x, int y) override;
+	bool move(Position) override;
 	void findBestPath() override;
 };
 

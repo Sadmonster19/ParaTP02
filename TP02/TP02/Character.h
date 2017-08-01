@@ -2,8 +2,15 @@
 #define MAPELEMENT_H
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
+
+struct Position
+{
+	int x;
+	int y;
+};
 
 class Character
 {
@@ -13,10 +20,10 @@ public:
     ~Character() = default;
 
 protected:
-    int positionX;
-    int positionY;
+	Position position;
+	vector<Position> bestPath;
 
-	virtual bool move(int x, int y) = 0;
+	virtual bool move(Position) = 0;
 	virtual void findBestPath() = 0;
 
 public:
