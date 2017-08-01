@@ -15,3 +15,5 @@
 /TP02/TP02.sdf
 /TP02/.vs/TP02/v14/.suo
 /TP02/TP02.opensdf
+*.obj
+*.l.tlog

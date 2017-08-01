@@ -12,10 +12,9 @@ public:
     Character(int positionX_, int positionY_);
     ~Character() = default;
 
-private:
+protected:
     int positionX;
     int positionY;
-
 public:
     
 };

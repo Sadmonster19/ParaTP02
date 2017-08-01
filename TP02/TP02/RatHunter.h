@@ -10,6 +10,7 @@ class RatHunter : Character
 {
 public:
     RatHunter() = default;
+    RatHunter(int positionX_, int positionY_);
     ~RatHunter() = default;
 
 private:
