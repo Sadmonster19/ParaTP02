@@ -146,6 +146,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Rat.cpp" />
+    <ClCompile Include="RatHunter.cpp" />
+    <ClCompile Include="WorldMap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Character.h" />
+    <ClInclude Include="Rat.h" />
+    <ClInclude Include="RatHunter.h" />
+    <ClInclude Include="WolrdMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

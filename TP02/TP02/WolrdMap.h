@@ -13,6 +13,8 @@ public:
 
 private:
 
+public:
+
 };
 
 #endif //WORLDMAP_H

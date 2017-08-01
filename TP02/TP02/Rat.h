@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Rat : MapElement
+class Rat : Character
 {
 public:
     Rat() = default;

@@ -1,12 +1,12 @@
 #ifndef RATHUNTER_H
 #define RATHUNTER_H
 
-#include "MapElement.h"
+#include "Character.h"
 #include <iostream>
 
 using namespace std;
 
-class RatHunter : MapElement
+class RatHunter : Character
 {
 public:
     RatHunter() = default;
