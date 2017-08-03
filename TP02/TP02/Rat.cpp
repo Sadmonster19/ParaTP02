@@ -1,6 +1,6 @@
 #include "Rat.h"
 
-Rat::Rat(int positionX_, int positionY_)
+Rat::Rat(unsigned int positionX_, unsigned int positionY_)
     : Character(positionX_, positionY_)
 {
 }

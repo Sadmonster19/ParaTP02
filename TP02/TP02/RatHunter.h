@@ -10,11 +10,14 @@ class RatHunter : Character
 {
 public:
     RatHunter() = default;
-    RatHunter(int positionX_, int positionY_);
+    RatHunter(unsigned int positionX_, unsigned int positionY_);
     ~RatHunter() = default;
 
 private:
-
+public:
+    bool move(Position) override;
+    void findBestPath(Position) override;
+    Position findClosestCheese();
 };
 
 #endif // !RATHUNTER_H

@@ -8,17 +8,17 @@ using namespace std;
 
 struct Position
 {
-	int x;
-	int y;
+    unsigned int x;
+    unsigned int y;
 
-	Position(int _x, int _y) : x{ _x }, y{ _y } {}
+	Position(unsigned int _x, unsigned int _y) : x{ _x }, y{ _y } {}
 };
 
 class Character
 {
 public:
     Character() = default;
-    Character(int positionX_, int positionY_);
+    Character(unsigned int positionX_, unsigned int positionY_);
     ~Character() = default;
 
 protected:

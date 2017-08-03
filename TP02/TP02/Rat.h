@@ -10,13 +10,14 @@ class Rat : Character
 {
 public:
     Rat() = default;
-    Rat(int positionX_, int positionY_);
+    Rat(unsigned int positionX_, unsigned int positionY_);
     ~Rat() = default;
 
 private:
 
 	int panicLevel = 0;
 
+public:
 	bool move(Position) override;
 	void findBestPath(Position) override;
 	Position findClosestCheese();
