@@ -1,4 +1,4 @@
-#include "WolrdMap.h"
+#include "WorldMap.h"
 #include <regex>
 
 WorldMap::WorldMap()

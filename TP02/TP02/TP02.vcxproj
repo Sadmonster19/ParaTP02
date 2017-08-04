@@ -157,7 +157,7 @@
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="Rat.h" />
     <ClInclude Include="RatHunter.h" />
-    <ClInclude Include="WolrdMap.h" />
+    <ClInclude Include="WorldMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
