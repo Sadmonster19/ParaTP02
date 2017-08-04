@@ -1,8 +1,8 @@
 #ifndef MPIHANDLER_H
 #define MPIHANDLER_H
 
-#include "WorldMap.h"
 #include <mpi.h>
+#include <iostream>
 
 class MPIHandler
 {
@@ -31,8 +31,10 @@ private:
     int rank, processCount, provided, ratCount, ratHunterCount;
 
 public:
-    int getRank() const;
+    int getRank();
     int getSize() const;
+    int getRatCount() const;
+    int getRatHunterCount() const;
 };
 
 #endif //MPIHANDLER_H

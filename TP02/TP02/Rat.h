@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Rat : Character
+class Rat : public Character
 {
 public:
     Rat() = default;
@@ -14,7 +14,7 @@ public:
     ~Rat() = default;
 
 private:
-    MapStructure mapData;
+    //MapStructure mapData;
 	int panicLevel = 0;
 
 public:

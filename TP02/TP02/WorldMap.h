@@ -40,8 +40,10 @@ private:
     void getInitialMap(string mapName);
 public:
     string const MAPFILE_ROOT = "";
-    vector<Rat*> initRats();
-    vector<RatHunter*> initRatHunters();
+    void initCharacters();
+    
+    vector<Position> getRatsPosition();
+    vector<Position> getRatHuntersPosition();
     void displayMap();
     bool isGameDone();
     void endGame(bool done);

@@ -50,10 +50,18 @@ MPIHandler::~MPIHandler() {
     MPI_Finalize();
 }
 
-int MPIHandler::getRank() const {
+int MPIHandler::getRank() {
     return rank;
 }
 
 int MPIHandler::getSize() const {
     return processCount;
+}
+
+int MPIHandler::getRatCount() const {
+    return ratCount;
+}
+
+int MPIHandler::getRatHunterCount() const {
+    return ratHunterCount;
 }

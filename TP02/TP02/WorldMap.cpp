@@ -61,27 +61,27 @@ void WorldMap::fillMapStructure(string mapString) {
     }
 }
 
-vector<Rat*> WorldMap::initRats() {
-    vector<Rat*> rats;
+vector<Position> WorldMap::getRatsPosition() {
+    vector<Position> rats;
     
     for (unsigned int y = 0; y < mapData.size(); y++) {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
             if (mapData[y][x] == rat) {
-                Rat rank{ x, y };
-                rats.push_back(&rank);
+                Position p{ x, y };
+                rats.push_back(p);
             }
     }
     return rats;
 }
 
-vector<RatHunter*> WorldMap::initRatHunters() {
-    vector<RatHunter*> ratHunters;
+vector<Position> WorldMap::getRatHuntersPosition() {
+    vector<Position> ratHunters;
 
     for (unsigned int y = 0; y < mapData.size(); y++) {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
             if (mapData[y][x] == ratHunter) {
-                RatHunter ratH{ x, y };
-                ratHunters.push_back(&ratH);
+                Position p{ x, y };
+                ratHunters.push_back(p);
             }
     }
     return ratHunters;
@@ -124,4 +124,23 @@ bool WorldMap::isGameDone() {
 
 void WorldMap::endGame(bool done) {
     gameDone = done;
+}
+
+void WorldMap::initCharacters() {
+    vector<Position> ratsPosition = getRatsPosition();
+    vector<Position> ratHuntersPosition = getRatHuntersPosition();
+
+    int id = 1;
+    for (auto pos : ratsPosition) {
+        int ratInfo[3] = {rat, pos.x, pos.y};
+
+        MPI_Send(ratInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
+        id++;
+    }
+    for (auto pos : ratHuntersPosition) {
+        int ratHunterInfo[3] = { ratHunter, pos.x, pos.y };
+
+        MPI_Send(ratHunterInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
+        id++;
+    }
 }
