@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class RatHunter : Character
+class RatHunter : public Character
 {
 public:
     RatHunter() = default;
@@ -14,7 +14,7 @@ public:
     ~RatHunter() = default;
 
 private:
-    MapStructure mapData;
+    //MapStructure mapData;
 public:
     bool move(Position) override;
     void findBestPath(Position) override;

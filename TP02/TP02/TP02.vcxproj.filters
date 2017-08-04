@@ -30,7 +30,7 @@
     <ClCompile Include="Character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EventHandler.cpp">
+    <ClCompile Include="MPIHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClInclude Include="Character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventHandler.h">
+    <ClInclude Include="WorldMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WorldMap.h">
+    <ClInclude Include="MPIHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

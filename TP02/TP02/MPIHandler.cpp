@@ -57,3 +57,11 @@ int MPIHandler::getRank() {
 int MPIHandler::getSize() const {
     return processCount;
 }
+
+int MPIHandler::getRatCount() const {
+    return ratCount;
+}
+
+int MPIHandler::getRatHunterCount() const {
+    return ratHunterCount;
+}

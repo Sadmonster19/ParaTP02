@@ -30,7 +30,9 @@ protected:
 	virtual void findBestPath(Position) = 0;
 
 public:
-    
+    unsigned int getPositionX() {
+        return position.x;
+    }
 };
 
 #endif //MAPELEMENT_H

@@ -1,5 +1,6 @@
 #include "mpi.h"
 #include "MPIHandler.h"
+#include "WorldMap.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -8,7 +9,7 @@
 //0 == map, 1-ratcount == ratHunter, racount-ratcount+huntercount == rat 
 //cmd in debug : "mpiexec -n x TP02.exe y z fileName"
 //x = ratCount+ratHunterCount + 1,  y = ratCount z = ratHunterCount
-//Ex : "mpiexec -n 8 TP02.exe 3 4 Map1.txt"
+//Ex : "mpiexec -n 6 TP02.exe 3 2 Map1.txt"
 
 int main(int argc, char* argv[]) {
 
@@ -17,11 +18,42 @@ int main(int argc, char* argv[]) {
     if (e.getRank() == 0) {
         WorldMap city{ argv[3] };
 
+        vector<Position> p = city.getRatHuntersPosition();
+
+        for (auto pos : p) {
+            cout << pos.x << endl;
+        }
+
+        city.initCharacters();
+    }
+    else if (e.getRank() <= e.getRatCount()){
+        Rat* ratCharacter;
+        int res[3];
+        MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        if (res[0] == rat) {
+            ratCharacter = &Rat{(unsigned int)res[1], (unsigned int)res[2]};
+        }
+
+        cout << e.getRank() << "Position en x :" << ratCharacter->getPositionX() << endl;
+    }
+    else if(e.getRank() <= e.getRatCount() + e.getRatHunterCount()){
+        RatHunter* ratHunterCharacter;
+        int res[3];
+        MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        if (res[0] == ratHunter) {
+            ratHunterCharacter = &RatHunter{ (unsigned int)res[1], (unsigned int)res[2] };
+        }
+
+        cout << e.getRank() << "Position en x :" << ratHunterCharacter->getPositionX() << endl;
+    }
+    
+    /*if (e.getRank == 0) {
+
         while (!city.isGameDone()) {
-            city.displayMap();
-            int done;
-            MPI_Recv(&done, 1, MPI_2INT, 1, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-            city.endGame(done);
+        city.displayMap();
+        int done;
+        MPI_Recv(&done, 1, MPI_2INT, 1, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        city.endGame(done);
         }
     }
     else if (e.getRank() == 1) {
@@ -42,7 +74,7 @@ int main(int argc, char* argv[]) {
             done = 1;
             MPI_Send(&done, 1, MPI_2INT, 0, 0, MPI_COMM_WORLD);
         }
-    }
+    }*/
 
 
     /*else if (r == 1) {
