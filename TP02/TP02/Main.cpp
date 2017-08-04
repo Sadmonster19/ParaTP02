@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     MPIHandler e{ argc, argv };
 
-    if (e.getRank == 0) {
+    if (e.getRank() == 0) {
         WorldMap city{ argv[3] };
 
         while (!city.isGameDone()) {
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
             city.endGame(done);
         }
     }
-    else if (e.getRank == 1) {
+    else if (e.getRank() == 1) {
         int bob = 0;
         int done = 1;
         while(bob < 5) {
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (e.getRank == 1) {
+    if (e.getRank() == 1) {
         int done = 0;
         if (done == 0) {
             cout << e.getRank << 2 << endl;

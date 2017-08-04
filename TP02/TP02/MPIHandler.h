@@ -31,7 +31,7 @@ private:
     int rank, processCount, provided, ratCount, ratHunterCount;
 
 public:
-    int getRank() const;
+    int getRank();
     int getSize() const;
 };
 

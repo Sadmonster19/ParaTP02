@@ -38,6 +38,11 @@ private:
 
     void fillMapStructure(string mapString);
     void getInitialMap(string mapName);
+	MapObject getMapElement(Position);
+	void changeElement(Position, MapObject);
+	bool moveCharacter(Position, Position);
+	void swapElements(Position, Position);
+
 public:
     string const MAPFILE_ROOT = "";
     vector<Rat*> initRats();

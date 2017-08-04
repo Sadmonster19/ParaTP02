@@ -125,3 +125,60 @@ bool WorldMap::isGameDone() {
 void WorldMap::endGame(bool done) {
     gameDone = done;
 }
+
+
+MapObject WorldMap::getMapElement(Position pos) {
+	return mapData[pos.y][pos.x];
+}
+
+void WorldMap::changeElement(Position pos, MapObject obj) {
+	mapData[pos.y][pos.x] = obj;
+}
+
+void WorldMap::swapElements(Position pos1, Position pos2) {
+	MapObject temp = getMapElement(pos1);
+	changeElement(pos1, getMapElement(pos2));
+	changeElement(pos2, temp);
+}
+
+bool WorldMap::moveCharacter(Position start, Position goal) {
+	MapObject character = getMapElement(start);
+	MapObject g = getMapElement(goal);
+
+	bool success = false;
+
+	switch (g)
+	{
+	case rat:
+		if (character == ratHunter) {
+			//TODO: Capture Rat -- I guess we just kill it?
+			//changeElement(goal, emptySpace); -> Replace Rat with EmptySpace
+			success = true;
+		}
+		break;
+	case ratHunter:
+		if (character == rat) {
+			//TODO: Capture Rat -- I guess we just kill it?
+			//changeElement(start, emptySpace); -> Replace Rat with EmptySpace
+			success = true;
+		}
+		break;
+	case cheese:
+		if (character == rat) {
+			//Eat cheese -- Replace cheese with EmptySpace
+			changeElement(goal, emptySpace);
+			success = true;
+		}
+		break;
+	case emptySpace:
+		success = true;
+		break;
+	default:
+		break;
+	}
+
+	if(success)
+		swapElements(start, goal);
+
+	return success;
+}

@@ -50,7 +50,7 @@ MPIHandler::~MPIHandler() {
     MPI_Finalize();
 }
 
-int MPIHandler::getRank() const {
+int MPIHandler::getRank() {
     return rank;
 }
 
