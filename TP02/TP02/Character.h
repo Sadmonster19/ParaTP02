@@ -2,6 +2,7 @@
 #define MAPELEMENT_H
 
 #include <iostream>
+#include <mpi.h>
 #include <vector>
 
 using namespace std;

@@ -14,7 +14,7 @@ public:
     ~Rat() = default;
 
 private:
-
+    MapStructure mapData;
 	int panicLevel = 0;
 
 public:

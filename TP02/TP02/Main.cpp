@@ -1,5 +1,5 @@
 #include "mpi.h"
-#include "EventHandler.h"
+#include "MPIHandler.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -11,13 +11,10 @@
 //Ex : "mpiexec -n 8 TP02.exe 3 4 Map1.txt"
 
 int main(int argc, char* argv[]) {
-           
-    int r, p;
 
-    EventHandler e{};
-    e.initHandler(argc, argv, r, p);
+    MPIHandler e{ argc, argv };
 
-    if (r == 0) {
+    if (e.getRank == 0) {
         WorldMap city{ argv[3] };
 
         while (!city.isGameDone()) {
@@ -27,21 +24,21 @@ int main(int argc, char* argv[]) {
             city.endGame(done);
         }
     }
-    else if (r == 1) {
+    else if (e.getRank == 1) {
         int bob = 0;
         int done = 1;
         while(bob < 5) {
-            cout << r << 1 << endl;
+            cout << e.getRank << 1 << endl;
             done = 0;
             MPI_Send(&done, 1, MPI_2INT, 0, 0, MPI_COMM_WORLD);
             bob++;
         }
     }
 
-    if (r == 1) {
+    if (e.getRank == 1) {
         int done = 0;
         if (done == 0) {
-            cout << r << 2 << endl;
+            cout << e.getRank << 2 << endl;
             done = 1;
             MPI_Send(&done, 1, MPI_2INT, 0, 0, MPI_COMM_WORLD);
         }
@@ -57,7 +54,6 @@ int main(int argc, char* argv[]) {
     else if (r == 2)
         cout << 2 << endl;*/
 
-    MPI_Finalize();
 
     return 0;
 }

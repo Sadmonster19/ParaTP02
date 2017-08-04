@@ -1,6 +1,6 @@
-#include "EventHandler.h"
+#include "MPIHandler.h"
 
-void EventHandler::initHandler(int& argc, char* argv[], int& r, int& p) {
+MPIHandler::MPIHandler(int& argc, char* argv[]) {
     ratCount = atoi(argv[1]);
     ratHunterCount = atoi(argv[2]);
     
@@ -11,10 +11,10 @@ void EventHandler::initHandler(int& argc, char* argv[], int& r, int& p) {
     }
     
     // Get the number of processes.
-    MPI_Comm_size(MPI_COMM_WORLD, &p);
+    MPI_Comm_size(MPI_COMM_WORLD, &processCount);
 
     // Get the individual process ID.
-    MPI_Comm_rank(MPI_COMM_WORLD, &r);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     // Get a group identifier for MPI_COMM_WORLD.
     MPI_Comm_group(MPI_COMM_WORLD, &worldGroupId);
@@ -44,4 +44,16 @@ void EventHandler::initHandler(int& argc, char* argv[], int& r, int& p) {
     }
     MPI_Group_incl(worldGroupId, ratHunterCount, ratHunterRanks, &ratHunterGroupId);
     MPI_Comm_create(MPI_COMM_WORLD, ratHunterGroupId, &ratHunterCommId);
+}
+
+MPIHandler::~MPIHandler() {
+    MPI_Finalize();
+}
+
+int MPIHandler::getRank() const {
+    return rank;
+}
+
+int MPIHandler::getSize() const {
+    return processCount;
 }

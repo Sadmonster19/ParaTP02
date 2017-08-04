@@ -67,11 +67,10 @@ vector<Rat*> WorldMap::initRats() {
     for (unsigned int y = 0; y < mapData.size(); y++) {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
             if (mapData[y][x] == rat) {
-                Rat r{ x, y };
-                rats.push_back(&r);
+                Rat rank{ x, y };
+                rats.push_back(&rank);
             }
     }
-
     return rats;
 }
 

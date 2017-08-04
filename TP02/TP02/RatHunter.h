@@ -14,6 +14,7 @@ public:
     ~RatHunter() = default;
 
 private:
+    MapStructure mapData;
 public:
     bool move(Position) override;
     void findBestPath(Position) override;

@@ -3,6 +3,7 @@
 
 #include "Rat.h"
 #include "RatHunter.h"
+#include <mpi.h>
 #include <iostream>
 #include <string>
 #include <sstream>
