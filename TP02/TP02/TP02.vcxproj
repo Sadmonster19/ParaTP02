@@ -145,7 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EventHandler.cpp" />
+    <ClCompile Include="MPIHandler.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Rat.cpp" />
@@ -154,7 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
-    <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="MPIHandler.h" />
     <ClInclude Include="Rat.h" />
     <ClInclude Include="RatHunter.h" />
     <ClInclude Include="WorldMap.h" />
