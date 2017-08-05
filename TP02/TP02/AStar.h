@@ -2,6 +2,7 @@
 #define ASTAR_H
 
 #include "WorldMap.h"
+#include "Character.h"
 #include "Movement.h"
 
 #include <memory>

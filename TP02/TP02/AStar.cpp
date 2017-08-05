@@ -2,7 +2,7 @@
 #include <set>
 
 #include "AStar.h"
-#include "Character.h"
+
 
 vector<Position> AStar::findBestPath(MapStructure ms, Character* c, MapObject goal) {
 	set<std::shared_ptr<Node>> open;
