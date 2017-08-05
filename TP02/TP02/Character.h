@@ -1,5 +1,5 @@
-#ifndef MAPELEMENT_H
-#define MAPELEMENT_H
+#ifndef CHARACTER_H
+#define CHARACTER_H
 
 #include "Movement.h"
 
@@ -28,4 +28,4 @@ public:
 	vector<Position> getPossibleMovement();
 };
 
-#endif //MAPELEMENT_H
+#endif //CHARACTER_H
