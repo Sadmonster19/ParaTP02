@@ -13,11 +13,11 @@
 using namespace std;
 
 enum MapObject{
-    wall,
-    rat,
-    ratHunter,
-    cheese,
-    emptySpace
+    WALL,
+    RAT,
+    HUNTER,
+    CHEESE,
+    EMPTY
 };
 
 typedef vector<vector<MapObject>> MapStructure;
@@ -41,6 +41,8 @@ private:
 public:
     string const MAPFILE_ROOT = "";
     void initCharacters();
+
+	static bool isObstacle(MapObject);
     
     vector<Position> getRatsPosition();
     vector<Position> getRatHuntersPosition();

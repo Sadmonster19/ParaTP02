@@ -30,21 +30,21 @@ int main(int argc, char* argv[]) {
         Rat* ratCharacter;
         int res[3];
         MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        if (res[0] == rat) {
+        if (res[0] == MapObject::RAT) {
             ratCharacter = &Rat{(unsigned int)res[1], (unsigned int)res[2]};
         }
 
-        cout << e.getRank() << "Position en x :" << ratCharacter->getPositionX() << endl;
+        cout << e.getRank() << "Position en x :" << ratCharacter->getPosition().x << endl;
     }
     else if(e.getRank() <= e.getRatCount() + e.getRatHunterCount()){
         RatHunter* ratHunterCharacter;
         int res[3];
         MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        if (res[0] == ratHunter) {
+        if (res[0] == MapObject::HUNTER) {
             ratHunterCharacter = &RatHunter{ (unsigned int)res[1], (unsigned int)res[2] };
         }
 
-        cout << e.getRank() << "Position en x :" << ratHunterCharacter->getPositionX() << endl;
+        cout << e.getRank() << "Position en x :" << ratHunterCharacter->getPosition().x << endl;
     }
     
     /*if (e.getRank == 0) {

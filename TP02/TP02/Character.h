@@ -9,10 +9,27 @@ using namespace std;
 
 struct Position
 {
-    unsigned int x;
-    unsigned int y;
+    int x;
+    int y;
 
-	Position(unsigned int _x, unsigned int _y) : x{ _x }, y{ _y } {}
+	Position()
+	{}
+
+	Position(int _x, int _y)
+		: x{ _x }, y{ _y }
+	{}
+
+	bool operator==(const Position& p) {
+		return (x == p.x && y == p.y);
+	}
+
+	Position operator+(const Position& p) {
+		return Position{ x + p.x, y + p.y };
+	}
+
+	int getDistance(const Position p) {
+		return std::abs(x - p.x) + std::abs(y - p.y);
+	}
 };
 
 class Character
@@ -24,15 +41,16 @@ public:
 
 protected:
 	Position position;
+	vector<Position> possibleMovement;
 	vector<Position> bestPath;
 
+	virtual void initPossibleMovement() = 0;
 	virtual bool move(Position) = 0;
 	virtual void findBestPath(Position) = 0;
 
 public:
-    unsigned int getPositionX() {
-        return position.x;
-    }
+	Position getPosition();
+	vector<Position> getPossibleMovement();
 };
 
 #endif //MAPELEMENT_H

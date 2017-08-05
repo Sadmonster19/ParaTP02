@@ -2,6 +2,8 @@
 #define RAT_H
 
 #include "Character.h"
+#include "Movement.h"
+
 #include <iostream>
 
 using namespace std;
@@ -18,9 +20,9 @@ private:
 	int panicLevel = 0;
 
 public:
+	void initPossibleMovement() override;
 	bool move(Position) override;
 	void findBestPath(Position) override;
-	Position findClosestCheese();
 };
 
 #endif //RAT_H

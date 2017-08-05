@@ -34,21 +34,21 @@ void WorldMap::fillMapStructure(string mapString) {
         switch (*first) 
         {
         case '#':
-            temp.push_back(wall);
+            temp.push_back(WALL);
             break;
         case 'R':
-            temp.push_back(rat);
+            temp.push_back(RAT);
             ratsCount++;
             break;
         case 'C':
-            temp.push_back(ratHunter);
+            temp.push_back(HUNTER);
             ratHuntersCount++;
             break;
         case 'F':
-            temp.push_back(cheese);
+            temp.push_back(CHEESE);
             break;
         case ' ':
-            temp.push_back(emptySpace);
+            temp.push_back(EMPTY);
             break;
         case '\r':
             break;
@@ -64,11 +64,10 @@ void WorldMap::fillMapStructure(string mapString) {
 vector<Position> WorldMap::getRatsPosition() {
     vector<Position> rats;
     
-    for (unsigned int y = 0; y < mapData.size(); y++) {
-        for (unsigned int x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == rat) {
-                Position p{ x, y };
-                rats.push_back(p);
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++)
+            if (mapData[y][x] == RAT) {
+                rats.push_back(Position { static_cast<int>(x), static_cast<int>(y) });
             }
     }
     return rats;
@@ -79,9 +78,8 @@ vector<Position> WorldMap::getRatHuntersPosition() {
 
     for (unsigned int y = 0; y < mapData.size(); y++) {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == ratHunter) {
-                Position p{ x, y };
-                ratHunters.push_back(p);
+            if (mapData[y][x] == HUNTER) {
+				ratHunters.push_back(Position{ static_cast<int>(x), static_cast<int>(y) });
             }
     }
     return ratHunters;
@@ -94,19 +92,19 @@ void WorldMap::displayMap() {
         for (unsigned int x = 0; x < mapData[y].size(); x++) {
             switch (mapData[y][x])
             {
-            case wall:
+            case WALL:
                 map += '#';
                 break;
-            case rat:
+            case RAT:
                 map += 'R';
                 break;
-            case ratHunter:
+            case HUNTER:
                 map += 'C';
                 break;
-            case cheese:
+            case CHEESE:
                 map += 'F';
                 break;
-            case emptySpace:
+            case EMPTY:
                 map += ' ';
                 break;
             default:
@@ -132,15 +130,19 @@ void WorldMap::initCharacters() {
 
     int id = 1;
     for (auto pos : ratsPosition) {
-        int ratInfo[3] = {rat, pos.x, pos.y};
+        int ratInfo[3] = {RAT, pos.x, pos.y};
 
         MPI_Send(ratInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
         id++;
     }
     for (auto pos : ratHuntersPosition) {
-        int ratHunterInfo[3] = { ratHunter, pos.x, pos.y };
+        int ratHunterInfo[3] = { HUNTER, pos.x, pos.y };
 
         MPI_Send(ratHunterInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
         id++;
     }
+}
+
+bool WorldMap::isObstacle(MapObject current) {
+	return current == WALL;
 }

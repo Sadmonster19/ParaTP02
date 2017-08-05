@@ -2,6 +2,8 @@
 #define RATHUNTER_H
 
 #include "Character.h"
+#include "Movement.h"
+
 #include <iostream>
 
 using namespace std;
@@ -16,9 +18,9 @@ public:
 private:
     //MapStructure mapData;
 public:
+	void initPossibleMovement() override;
     bool move(Position) override;
     void findBestPath(Position) override;
-    Position findClosestCheese();
 };
 
 #endif // !RATHUNTER_H
