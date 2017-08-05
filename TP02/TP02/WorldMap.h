@@ -1,14 +1,11 @@
 #ifndef WOLRDMAP_H
 #define WORLDMAP_H
 
+#include <string>
+#include <vector>
+
 #include "Rat.h"
 #include "RatHunter.h"
-#include <mpi.h>
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <vector>
 
 using namespace std;
 

@@ -1,5 +1,3 @@
-#include <assert.h>
-
 #include "Movement.h"
 
 Position Movement::getPositionForDirection(Direction d) {
@@ -39,7 +37,7 @@ Position Movement::getPositionForDirection(Direction d) {
 			break;
 
 		default:
-			throw new exception("No position associated for this direction");
+			throw new std::exception("No position associated for this direction");
 	}
 
 	return p;

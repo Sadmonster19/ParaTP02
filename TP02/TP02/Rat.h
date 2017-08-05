@@ -4,8 +4,6 @@
 #include "Character.h"
 #include "Movement.h"
 
-#include <iostream>
-
 using namespace std;
 
 class Rat : public Character

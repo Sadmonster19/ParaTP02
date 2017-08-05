@@ -1,10 +1,14 @@
-#include "WorldMap.h"
+#include <iostream>
+#include <fstream>
 #include <regex>
+#include <sstream>
+#include <mpi.h>
+
+#include "WorldMap.h"
 
 WorldMap::WorldMap()
     : ratsCount{}, ratHuntersCount{}
 {
-
 }
 
 WorldMap::WorldMap(string fileName)

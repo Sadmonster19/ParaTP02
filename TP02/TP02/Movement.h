@@ -3,8 +3,6 @@
 
 #include <algorithm>
 
-#include "Character.h"
-
 enum Direction {
 	NORTH_WEST,
 	NORTH,
@@ -15,7 +13,7 @@ enum Direction {
 	SOUTH_WEST,
 	WEST
 };
-/*
+
 struct Position
 {
 	int x;
@@ -40,7 +38,7 @@ struct Position
 		return std::abs(x - p.x) + std::abs(y - p.y);
 	}
 };
-*/
+
 class Movement
 {
 

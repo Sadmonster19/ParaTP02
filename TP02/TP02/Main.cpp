@@ -1,9 +1,10 @@
-#include "mpi.h"
-#include "MPIHandler.h"
-#include "WorldMap.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
+
+#include "mpi.h"
+#include "MPIHandler.h"
+#include "WorldMap.h"
 
 //argv : 0 == TP02.exe, 1 == rat, 2 == ratHunter, 3 == file name of map 
 //0 == map, 1-ratcount == ratHunter, racount-ratcount+huntercount == rat 

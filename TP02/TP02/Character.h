@@ -1,36 +1,11 @@
 #ifndef MAPELEMENT_H
 #define MAPELEMENT_H
 
-#include <iostream>
-#include <mpi.h>
+#include "Movement.h"
+
 #include <vector>
 
 using namespace std;
-
-struct Position
-{
-    int x;
-    int y;
-
-	Position()
-	{}
-
-	Position(int _x, int _y)
-		: x{ _x }, y{ _y }
-	{}
-
-	bool operator==(const Position& p) {
-		return (x == p.x && y == p.y);
-	}
-
-	Position operator+(const Position& p) {
-		return Position{ x + p.x, y + p.y };
-	}
-
-	int getDistance(const Position p) {
-		return std::abs(x - p.x) + std::abs(y - p.y);
-	}
-};
 
 class Character
 {

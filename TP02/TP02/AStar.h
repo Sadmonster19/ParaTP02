@@ -1,11 +1,10 @@
 #ifndef ASTAR_H
 #define ASTAR_H
 
-#include <memory>
-#include <set>
-#include <tuple>
-
 #include "WorldMap.h"
+#include "Movement.h"
+
+#include <memory>
 
 struct Node {
 	int score;						//movementCost + distance from current to goal (with/without obstacle)
