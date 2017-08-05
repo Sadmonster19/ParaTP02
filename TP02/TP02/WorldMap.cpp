@@ -20,6 +20,7 @@ void WorldMap::getInitialMap(string mapName) {
     );
 
     fillMapStructure(temp);
+	findDoors();
 }
 
 void WorldMap::fillMapStructure(string mapString) {
@@ -109,13 +110,16 @@ void WorldMap::displayMap() {
             case emptySpace:
                 map += ' ';
                 break;
+			case door:
+				map += 'D';
+				break;
             default:
                 break;
             }
         }
         map += '\n';
     }
-    cout << map;
+	cout << map << endl;
 }
 
 bool WorldMap::isGameDone() {
@@ -132,17 +136,53 @@ void WorldMap::initCharacters() {
 
     int id = 1;
     for (auto pos : ratsPosition) {
-        int ratInfo[3] = {rat, pos.x, pos.y};
+		unsigned int x = pos.x;
+		unsigned int y = pos.y;
+		th.emplace_back(async([&, id, x, y]() {
+			Position pos( x, y);
+			bool isAlive = true;
+			bool success;
+			int ratInfo[2] = { pos.x, pos.y };
+			MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
-        MPI_Send(ratInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
+			while (!gameReady);
+
+			int start[1] = { 1 };
+			MPI_Send(start, _countof(start), MPI_2INT, id, 0, MPI_COMM_WORLD);
+
+			while (!gameDone && isAlive) {
+				unsigned int movement[2];
+				MPI_Recv(&movement, _countof(movement), MPI_2INT, id, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+				Position goal(movement[0], movement[1]);
+
+				bool success = moveCharacter(pos, goal, isAlive);
+				
+				if (success)
+					pos = goal;
+
+				int response[3] = { success, gameDone, isAlive };
+				MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
+			}
+			if (gameDone) {
+				int response[3] = { false, gameDone, isAlive };
+				MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
+			}
+		}));
+
+        /*int ratInfo[3] = {rat, pos.x, pos.y};
+
+        MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);*/
         id++;
     }
     for (auto pos : ratHuntersPosition) {
         int ratHunterInfo[3] = { ratHunter, pos.x, pos.y };
 
-        MPI_Send(ratHunterInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
+        MPI_Send(ratHunterInfo, _countof(ratHunterInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
         id++;
     }
+
+	gameReady = true;
+
 }
 
 MapObject WorldMap::getMapElement(Position pos) {
@@ -159,25 +199,26 @@ void WorldMap::swapElements(Position pos1, Position pos2) {
 	changeElement(pos2, temp);
 }
 
-bool WorldMap::moveCharacter(Position start, Position goal) {
+bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
+	lock_guard<std::mutex> lock(m);
 	MapObject character = getMapElement(start);
-	MapObject g = getMapElement(goal);
 
 	bool success = false;
 
-	switch (g)
+	switch (getMapElement(goal))
 	{
 	case rat:
 		if (character == ratHunter) {
-			//TODO: Capture Rat -- I guess we just kill it?
-			//changeElement(goal, emptySpace); -> Replace Rat with EmptySpace
+			changeElement(goal, emptySpace);
+			swapElements(start, goal);
+			isAlive = false;
 			success = true;
 		}
 		break;
 	case ratHunter:
 		if (character == rat) {
-			//TODO: Capture Rat -- I guess we just kill it?
-			//changeElement(start, emptySpace); -> Replace Rat with EmptySpace
+			changeElement(start, emptySpace);
+			isAlive = false;
 			success = true;
 		}
 		break;
@@ -185,18 +226,52 @@ bool WorldMap::moveCharacter(Position start, Position goal) {
 		if (character == rat) {
 			//Eat cheese -- Replace cheese with EmptySpace
 			changeElement(goal, emptySpace);
+			swapElements(start, goal);
 			success = true;
 		}
 		break;
 	case emptySpace:
+		swapElements(start, goal);
 		success = true;
+		break;
+	case door:
+		if (character == rat) {
+			//Rat is out of the game -- Replace rat with EmptySpace
+			changeElement(start, emptySpace);
+			isAlive = false;
+			success = true;
+		}
 		break;
 	default:
 		break;
 	}
 
-	if (success)
-		swapElements(start, goal);
+	if(success)
+		displayMap();
 
 	return success;
+}
+
+void WorldMap::findDoors() {
+	size_t lineCount = mapData.size();
+	//Doors can be on first line
+	for (size_t i = 0; i < mapData[0].size(); ++i) {
+		if (mapData[0][i] == emptySpace)
+			mapData[0][i] = door;
+	}
+
+	//Doors can be on last line
+	for (size_t i = 0; i < mapData[mapData.size()-1].size()-1; ++i) {
+		if (mapData[lineCount-1][i] == emptySpace)
+			mapData[lineCount-1][i] = door;
+	}
+	//Doors can be on first or last of each line
+	for (size_t i = 1; i < mapData.size()-1; ++i) {
+		size_t lineSize = mapData[i].size();
+
+		if (mapData[i][0] == emptySpace)
+			mapData[i][0] = door;
+		if (mapData[i][lineSize-1] == emptySpace)
+			mapData[i][lineSize-1] = door;
+	}
 }

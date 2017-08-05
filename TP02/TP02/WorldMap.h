@@ -9,6 +9,9 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <thread>
+#include <future>
+#include <mutex>
 
 using namespace std;
 
@@ -17,7 +20,8 @@ enum MapObject{
     rat,
     ratHunter,
     cheese,
-    emptySpace
+    emptySpace,
+	door
 };
 
 typedef vector<vector<MapObject>> MapStructure;
@@ -30,18 +34,23 @@ public:
     WorldMap(string fileName);
     ~WorldMap() = default;
     MapStructure mapData;
+	vector<future<void>> th;
+	bool gameDone = false;
+	bool gameReady = false;
 
 private:
     int ratsCount;
     int ratHuntersCount;
-    bool gameDone = false;
+	vector<Position> doors;
+	mutex m;
 
     void fillMapStructure(string mapString);
     void getInitialMap(string mapName);
 	MapObject getMapElement(Position);
 	void changeElement(Position, MapObject);
-	bool moveCharacter(Position, Position);
+	bool moveCharacter(Position, Position, bool&);
 	void swapElements(Position, Position);
+	void findDoors();
 
 public:
     string const MAPFILE_ROOT = "";
@@ -52,6 +61,13 @@ public:
     void displayMap();
     bool isGameDone();
     void endGame(bool done);
+	void endGame() {
+		gameDone = true;
+
+		for (auto it = begin(th); it != end(th); it++) {
+			it->get();
+		}
+	};
 };
 
 #endif //WORLDMAP_H
