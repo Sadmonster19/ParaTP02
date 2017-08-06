@@ -135,31 +135,32 @@ void WorldMap::initCharacters() {
     vector<Position> ratHuntersPosition = getRatHuntersPosition();
 
     int id = 1;
-    for (auto pos : ratsPosition) {
-		unsigned int x = pos.x;
-		unsigned int y = pos.y;
-		th.emplace_back(async([&, id, x, y]() {
-			Position pos( x, y);
+    for (auto position : ratsPosition) {
+		th.emplace_back(async([&, id, position]() {
+			Position pos = position;
 			bool isAlive = true;
-			bool success;
-			int ratInfo[2] = { pos.x, pos.y };
+			//Send information to initiate the rat
+			unsigned int ratInfo[2] = { pos.x, pos.y };
 			MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
+			//Wait untile the game is started
 			while (!gameReady);
 
+			//Tell rat the game has started
 			int start[1] = { 1 };
 			MPI_Send(start, _countof(start), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
+				//Ask for the rat movement
 				unsigned int movement[2];
 				MPI_Recv(&movement, _countof(movement), MPI_2INT, id, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
 
 				bool success = moveCharacter(pos, goal, isAlive);
 				
-				if (success)
-					pos = goal;
+				if (success) pos = goal;
 
+				//Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
 			}
@@ -168,10 +169,6 @@ void WorldMap::initCharacters() {
 				MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
 			}
 		}));
-
-        /*int ratInfo[3] = {rat, pos.x, pos.y};
-
-        MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);*/
         id++;
     }
     for (auto pos : ratHuntersPosition) {

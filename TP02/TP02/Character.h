@@ -33,6 +33,12 @@ public:
     Position getPosition() {
         return position;
     }
+	unsigned int getX() {
+		return position.x;
+	}
+	unsigned int getY() {
+		return position.y;
+	}
 	void setPosition(Position pos) {
 		position = pos;
 	}

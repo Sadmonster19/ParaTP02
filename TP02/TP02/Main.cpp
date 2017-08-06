@@ -2,7 +2,6 @@
 #include "MPIHandler.h"
 #include "WorldMap.h"
 #include <iostream>
-#include <thread>
 
 //argv : 0 == TP02.exe, 1 == rat, 2 == ratHunter, 3 == file name of map 
 //0 == map, 1-ratcount == ratHunter, racount-ratcount+huntercount == rat 
@@ -21,39 +20,44 @@ int main(int argc, char* argv[]) {
         city.initCharacters();
 
 		city.gameReady = true;
+		_sleep(10);
 		city.endGame();
 
     }
     else if (e.getRank() <= e.getRatCount()){
-        Rat* ratCharacter;
-        int infos[2];
 		bool gameOver = false;
 		bool isAlive = true;
+
+		//Get info to initialise rat
+		int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        ratCharacter = &Rat{(unsigned int)infos[0], (unsigned int)infos[1]};
-		Position pos = ratCharacter->getPosition();
+        Rat rat{(unsigned int)infos[0], (unsigned int)infos[1]};
+		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
-		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << pos.x << ", " << pos.y << ")" << endl;
-
+		//Wait until you receive that the gamse has started
 		int res[1];
 		MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
-			unsigned int movement[2] = {pos.x+1, pos.y+1};
+			Position wanted = Position(rat.getX(), rat.getY() + 1); //Normally would find the best path
+
+			unsigned int movement[2] = {wanted.x, wanted.y};
 			MPI_Send(&movement, _countof(movement), MPI_2INT, 0, 0, MPI_COMM_WORLD);
-			int result[3];
+
+			int result[3];	//Succes, gameDone, isAlive
 			MPI_Recv(&result, _countof(result), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-			if (result[0]) {
-				ratCharacter->setPosition(Position{ pos.x + 1, pos.y + 1 });
-				cout << "Process " << e.getRank() << ", new position (" << ratCharacter->getPosition().x << ", " << ratCharacter->getPosition().y << ")" << endl;		
+
+			if (result[0]) {	//Move success
+				rat.setPosition(wanted);
+				cout << "Process " << e.getRank() << ", new position (" << rat.getPosition().x << ", " << rat.getPosition().y << ")" << endl;		
 			}
-			if (result[1]) {
+			if (result[1]) {	//Game is over
 				gameOver = true;
 				cout << "Process " << e.getRank() << ", GAMEOVER" << endl;
 			}
-			if (!result[2]) {
+			if (!result[2]) {	//Rat is dead!
 				isAlive = false;
-				cout << "Process " << e.getRank() << ", DEAD" << endl;
+				cout << "Process " << e.getRank() << ", IS DEAD" << endl;
 			}
 		}
     }
