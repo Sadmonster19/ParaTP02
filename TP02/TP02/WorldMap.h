@@ -1,23 +1,19 @@
-#ifndef WOLRDMAP_H
+#ifndef WORLDMAP_H
 #define WORLDMAP_H
 
-#include "Rat.h"
-#include "RatHunter.h"
-#include <mpi.h>
-#include <iostream>
 #include <string>
-#include <sstream>
-#include <fstream>
 #include <vector>
+
+#include "Movement.h"
 
 using namespace std;
 
 enum MapObject{
-    wall,
-    rat,
-    ratHunter,
-    cheese,
-    emptySpace
+    WALL,
+    RAT,
+    HUNTER,
+    CHEESE,
+    EMPTY
 };
 
 typedef vector<vector<MapObject>> MapStructure;
@@ -41,6 +37,8 @@ private:
 public:
     string const MAPFILE_ROOT = "";
     void initCharacters();
+
+	static bool isObstacle(MapObject);
     
     vector<Position> getRatsPosition();
     vector<Position> getRatHuntersPosition();

@@ -2,7 +2,7 @@
 #define RATHUNTER_H
 
 #include "Character.h"
-#include <iostream>
+#include "Movement.h"
 
 using namespace std;
 
@@ -10,15 +10,12 @@ class RatHunter : public Character
 {
 public:
     RatHunter() = default;
-    RatHunter(unsigned int positionX_, unsigned int positionY_);
+    RatHunter(Position);
     ~RatHunter() = default;
 
-private:
-    //MapStructure mapData;
 public:
+	void initPossibleMovement() override;
     bool move(Position) override;
-    void findBestPath(Position) override;
-    Position findClosestCheese();
 };
 
 #endif // !RATHUNTER_H

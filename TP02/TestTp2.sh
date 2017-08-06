@@ -1,5 +1,5 @@
 cd Debug
 
-mpiexec -n 2 TP02.exe
+mpiexec -n 6 TP02.exe 3 2 Map1.txt
 
 $SHELL
