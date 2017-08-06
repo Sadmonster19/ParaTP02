@@ -2,6 +2,8 @@
 #define CHARACTER_H
 
 #include "Tools.h"
+#include <mpi.h>
+#include <mutex>
 
 using namespace std;
 
@@ -22,7 +24,9 @@ protected:
 	virtual bool move(Position) = 0;
 
 public:
-    //void getInitialMap();
+    void displayMap();
+    void setInitialMap();
+    MapStructure getInitialMap();
 	Position getPosition();
 	unsigned int getX() {
 		return position.x;

@@ -5,6 +5,7 @@
 #include <regex>
 #include <sstream>
 #include <mpi.h>
+#include <new>
 
 
 WorldMap::WorldMap()
@@ -82,8 +83,8 @@ vector<Position> WorldMap::getRatsPosition() {
 vector<Position> WorldMap::getRatHuntersPosition() {
     vector<Position> ratHunters;
 
-    for (unsigned int y = 0; y < mapData.size(); y++) {
-        for (unsigned int x = 0; x < mapData[y].size(); x++)
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++)
             if (mapData[y][x] == HUNTER) {
 				ratHunters.push_back(Position{ static_cast<int>(x), static_cast<int>(y) });
             }
@@ -147,6 +148,9 @@ void WorldMap::initCharacters() {
 			cout << "YAY: " << ratInfo[2] << " - " << (MapStructure*)ratInfo[2] << endl;
 			MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
+            sendInitialMapToCharacter(id);
+            //displayMap();
+
 			//Wait untile the game is started
 			while (!gameReady);
 
@@ -176,7 +180,7 @@ void WorldMap::initCharacters() {
         id++;
     }
     for (auto position : ratHuntersPosition) {
-        th.emplace_back([&, id, position]() {
+        /*th.emplace_back([&, id, position]() {
             Position pos = position;
             bool isAlive = true;
             //Send information to initiate the rat
@@ -210,6 +214,11 @@ void WorldMap::initCharacters() {
                 MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
             }
         });
+        id++;*/
+
+        int ratHunterInfo[3] = { HUNTER, position.x, position.y };
+
+        MPI_Send(ratHunterInfo, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
         id++;
     }
 
@@ -308,11 +317,25 @@ void WorldMap::findDoors() {
 	}
 }
 
-/*void WorldMap::sendInitialMapToCharacter() {
+void WorldMap::sendInitialMapToCharacter(int id) {
     int height = mapData.size();
     int width = mapData[0].size();
 
-    int* mapInfo;
+    int mapInfo[2]{height, width};
+    MPI_Send(mapInfo, _countof(mapInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
+    int arrayDim = height*width;
 
-}*/
+    int* map = new (int [arrayDim]);
+    int i = 0;
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++) {
+            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER)
+                map[i] = static_cast<int>(mapData[y][x]);
+            else
+                map[i] = static_cast<int>(EMPTY);
+            i++;
+        }
+    }
+    MPI_Send(map, arrayDim, MPI_2INT, id, 0, MPI_COMM_WORLD);
+}

@@ -15,6 +15,11 @@
 
 int main(int argc, char* argv[]) {
 
+    /*WorldMap wp{ "Maps/Map1.txt" };
+    
+    wp.sendInitialMapToCharacter(1);
+    wp.displayMap();*/
+    
     MPIHandler e{ argc, argv };
 
     if (e.getRank() == 0) {
@@ -36,8 +41,11 @@ int main(int argc, char* argv[]) {
 		int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
-        //rat.getInitialMap();
-        rat.findBestPath(RAT);
+        
+        cout << e.getRank() << endl;
+        rat.setInitialMap();
+        //rat.displayMap();
+        //rat.findBestPath(CHEESE);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 

@@ -38,7 +38,7 @@ public:
     vector<Position> getRatsPosition();
     vector<Position> getRatHuntersPosition();
     void displayMap();
-    //void sendInitialMapToCharacter();
+    void sendInitialMapToCharacter(int id);
     bool isGameDone();
     void endGame(bool done);
 	void endGame() {
