@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <set>
-#include <limits>
-
 #include "AStar.h"
 
 vector<Position> AStar::findBestPath(MapStructure ms, Character* c, MapObject goal) {

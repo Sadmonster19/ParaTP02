@@ -3,7 +3,6 @@
 
 #include <mpi.h>
 
-
 class MPIHandler
 {
 public:

@@ -1,10 +1,14 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include <iostream>
 #include <algorithm>
 #include <memory>
 #include <set>
+#include <vector>
+#include <limits>
 
+using namespace std;
 
 enum MapObject {
     WALL,
@@ -14,6 +18,8 @@ enum MapObject {
     EMPTY,
 	DOOR
 };
+
+typedef vector<vector<MapObject>> MapStructure;
 
 enum Direction {
 	NORTH_WEST,
@@ -104,16 +110,22 @@ struct Node {
 		: score{ _score }, p{ _p }, movementCost{ _movementCost }, parent{ _parent }
 	{}
 
+    bool operator()(Node a, Node b) const {
+        return a.score < b.score;
+    }
+
 	bool operator==(const Node& n) {
 		return p == n.p;
 	}
 };
 
 //Needed a Compare structure to have an ordered set based on the score and eliminate duplicates
-struct Compare {
+/*struct Compare {
 	bool operator()(std::shared_ptr<Node> a, std::shared_ptr<Node> b) const {
 		return a->score < b->score;
 	}
-};
+};*/
+
+typedef set<std::shared_ptr<Node>> SetNode;
 
 #endif //TOOLS_H

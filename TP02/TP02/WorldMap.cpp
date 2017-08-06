@@ -1,12 +1,11 @@
-#include <iostream>
+#include "WorldMap.h"
+#include "Rat.h"
+#include "RatHunter.h"
 #include <fstream>
 #include <regex>
 #include <sstream>
 #include <mpi.h>
 
-#include "WorldMap.h"
-#include "Rat.h"
-#include "RatHunter.h"
 
 WorldMap::WorldMap()
     : ratsCount{}, ratHuntersCount{}
@@ -140,7 +139,7 @@ void WorldMap::initCharacters() {
 
     int id = 1;
     for (auto position : ratsPosition) {
-		th.emplace_back(async([&, id, position]() {
+		th.emplace_back([&, id, position]() {
 			Position pos = position;
 			bool isAlive = true;
 			//Send information to initiate the rat
@@ -173,7 +172,7 @@ void WorldMap::initCharacters() {
 				int response[3] = { false, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
 			}
-		}));
+		});
         id++;
     }
     for (auto pos : ratHuntersPosition) {

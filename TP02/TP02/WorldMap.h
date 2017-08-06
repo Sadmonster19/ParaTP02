@@ -1,19 +1,13 @@
 #ifndef WORLDMAP_H
 #define WORLDMAP_H
 
-#include <string>
-#include <vector>
-#include <thread>
-#include <future>
-#include <mutex>
-
 #include "Tools.h"
+#include <string>
+#include <thread>
+#include <mutex>
 
 using namespace std;
 
-typedef vector<vector<MapObject>> MapStructure;
-
-//Doit contenir un thread pour chaque character de le map.
 class WorldMap
 {
 public:
@@ -21,14 +15,13 @@ public:
     WorldMap(string fileName);
     ~WorldMap() = default;
     MapStructure mapData;
-	vector<future<void>> th;
+	vector<thread> th;
 	bool gameDone = false;
 	bool gameReady = false;
 
 private:
     int ratsCount;
     int ratHuntersCount;
-	vector<Position> doors;
 	mutex m;
 
     void fillMapStructure(string mapString);
@@ -53,7 +46,7 @@ public:
 		gameDone = true;
 
 		for (auto it = begin(th); it != end(th); it++) {
-			it->get();
+			it->join();
 		}
 	};
 };

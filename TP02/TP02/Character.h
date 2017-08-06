@@ -2,9 +2,6 @@
 #define CHARACTER_H
 
 #include "Tools.h"
-#include "WorldMap.h"
-
-#include <vector>
 
 using namespace std;
 

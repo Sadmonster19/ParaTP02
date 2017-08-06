@@ -3,13 +3,6 @@
 
 #include "WorldMap.h"
 #include "Character.h"
-#include "Tools.h"
-
-#include <memory>
-#include <set>
-
-
-typedef set<std::shared_ptr<Node>, Compare> SetNode;
 
 class AStar
 {
