@@ -22,10 +22,9 @@ private:
 	static vector<Position> getAllPositionForMapObject(MapStructure, MapObject);
 	static int findClosestDistanceToGoal(Position, vector<Position>);
 
-	static bool doesSetContains(SetNode&, std::shared_ptr<Node>);
-	static bool doesSetContains(set<Node>&, Node);
+	static bool doesSetContains(SetNodePtr&, std::shared_ptr<Node>);
 
-	static void removeBiggestScoreForNode(SetNode&, std::shared_ptr<Node>);
+	static void removeBiggestScoreForNode(SetNodePtr&, std::shared_ptr<Node>);
 };
 
 #endif //ASTAR_H

@@ -1,8 +1,8 @@
 #include "AStar.h"
 
 vector<Position> AStar::findBestPath(Character* c, MapObject goal) {
-	SetNode open;
-	SetNode close;
+	SetNodePtr open;
+	SetNodePtr close;
 	open.insert(std::make_shared<Node>(0, c->getPosition(), 0, nullptr));
 
 	vector<Position> goals = getAllPositionForMapObject(c->getInitialMap(), goal);
@@ -37,38 +37,28 @@ vector<Position> AStar::findBestPath(Character* c, MapObject goal) {
 }
 
 vector<Position> AStar::findAllElementInZone(RatHunter rh, vector<Position> rats) {
-	vector<Position> isInZone;
+	SetNode inSight;
+	SetNode tests;
+	tests.insert(Node(rh.getPosition()));
 
-	/*
-	set<Node> tests;
-	tests.insert(Node(0, rh.getPosition(), 0, nullptr));
+	for (int i = 0; i < rh.MAX_SIGHT; ++i) {
+		SetNode temp;
 
-	int cptZoneLength = 0;
-	
-	while (!tests.empty() || cptZoneLength < rh.ZONE_LENGTH) {
-		Node current = *tests.begin();
-		tests.erase(current);
+		for (Node n : tests) {
+			for (Position p : rh.getPossibleMovement()) {
+				Position nextP = n.p + p;
 
-		for (Position p : rh.getPossibleMovement()) {
-			Position nextP = current.p + p;
+				if (isRat(rats, nextP))
+					inSight.insert(nextP);
 
-			if (isRat(rats, current.p))
-				isInZone.emplace_back(current.p);
-
-			if (!isObstacle(rh.getMapObjectForPosition(current.p))) {
-				Node nextN { nextP };
-
-				/*
-				if (!doesSetContains(tests, nextN))
-					tests.insert(nextN);
-					
+				if (!isObstacle(rh.getMapObjectForPosition(nextP))) 
+					temp.insert(Node{ nextP });
 			}
 		}
-		++cptZoneLength;
+		tests = temp;
 	}
 
-	*/
-	return isInZone;
+	return Tools::convertSetToVector(inSight);
 }
 
 vector<Position> AStar::buildPath(std::shared_ptr<Node> n) {
@@ -121,17 +111,13 @@ int AStar::findClosestDistanceToGoal(Position p, vector<Position> goals) {
 	return closest;
 }
 
-bool AStar::doesSetContains(SetNode& ns, std::shared_ptr<Node> toFind) {
+bool AStar::doesSetContains(SetNodePtr& ns, std::shared_ptr<Node> toFind) {
 	return std::find_if(ns.begin(), ns.end(), [&](std::shared_ptr<Node> const& n) {
 		return *n == *toFind;
 	}) != ns.end();
 }
 
-bool AStar::doesSetContains(set<Node>& s, Node toFind) {
-	return  true; // s.find(toFind) != s.end();
-}
-
-void AStar::removeBiggestScoreForNode(SetNode& ns, std::shared_ptr<Node> toFind) {
+void AStar::removeBiggestScoreForNode(SetNodePtr& ns, std::shared_ptr<Node> toFind) {
 	auto it = std::find_if(ns.begin(), ns.end(), [&](std::shared_ptr<Node> const& n) {
 		return *n == *toFind;
 	});

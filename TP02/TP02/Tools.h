@@ -11,11 +11,11 @@
 using namespace std;
 
 enum MapObject {
-    WALL,
-    RAT,
-    HUNTER,
-    CHEESE,
-    EMPTY,
+	WALL,
+	RAT,
+	HUNTER,
+	CHEESE,
+	EMPTY,
 	DOOR
 };
 
@@ -40,12 +40,16 @@ struct Position
 	Position()
 	{}
 
-	Position(int _x, int _y)
-		: x{ _x }, y{ _y }
+	Position(int x_, int y_)
+		: x{ x_ }, y{ y_ }
 	{}
 
 	bool operator==(const Position& p) {
 		return (x == p.x && y == p.y);
+	}
+
+	bool operator<(const Position& p) {
+		return x < p.x || (x == p.x && y < p.y);
 	}
 
 	Position operator+(const Position& p) {
@@ -106,12 +110,12 @@ struct Node {
 	int movementCost;				//Cost from the beginning tile to the current
 	std::shared_ptr<Node> parent;	//Needed to reconstruct the path
 
-	Node(Position _p)
-		: p{ _p } 
+	Node(Position p_)
+		: p{ p_ }
 	{}
 
-	Node(int _score, Position _p, int _movementCost, std::shared_ptr<Node> _parent)
-		: score{ _score }, p{ _p }, movementCost{ _movementCost }, parent{ _parent }
+	Node(int score_, Position p_, int movementCost_, std::shared_ptr<Node> parent_)
+		: score{ score_ }, p{ p_ }, movementCost{ movementCost_ }, parent{ parent_ }
 	{}
 
 	bool operator==(const Node& n) {
@@ -119,13 +123,31 @@ struct Node {
 	}
 };
 
-//Needed a Compare structure to have an ordered set based on the score and eliminate duplicates
+//Needed a Compare structure to have an ordered set based on something and eliminate duplicates
 struct Compare {
 	bool operator()(std::shared_ptr<Node> a, std::shared_ptr<Node> b) const {
 		return a->score < b->score;
 	}
+
+	bool operator()(Node a, Node b) const {
+		return a.p < b.p;
+	}
 };
 
-typedef set<std::shared_ptr<Node>, Compare> SetNode;
+typedef set<std::shared_ptr<Node>, Compare> SetNodePtr;
+typedef set<Node, Compare> SetNode;
+
+ class Tools {
+ public:
+	static vector<Position> convertSetToVector(SetNode sn) {
+		vector<Position> result;
+
+		for (Node n : sn) {
+			result.emplace_back(n.p);
+		}
+
+		return result;
+	}
+};
 
 #endif //TOOLS_H

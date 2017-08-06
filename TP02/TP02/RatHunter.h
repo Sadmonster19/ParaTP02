@@ -14,7 +14,7 @@ public:
     RatHunter(Position);
     ~RatHunter() = default;
 
-	const int ZONE_LENGTH = 10;
+	const int MAX_SIGHT = 10;
 
 public:
 	void initPossibleMovement() override;
