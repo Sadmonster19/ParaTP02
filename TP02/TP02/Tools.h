@@ -106,6 +106,10 @@ struct Node {
 	int movementCost;				//Cost from the beginning tile to the current
 	std::shared_ptr<Node> parent;	//Needed to reconstruct the path
 
+	Node(Position _p)
+		: p{ _p } 
+	{}
+
 	Node(int _score, Position _p, int _movementCost, std::shared_ptr<Node> _parent)
 		: score{ _score }, p{ _p }, movementCost{ _movementCost }, parent{ _parent }
 	{}
@@ -122,6 +126,6 @@ struct Compare {
 	}
 };
 
-typedef set<std::shared_ptr<Node>> SetNode;
+typedef set<std::shared_ptr<Node>, Compare> SetNode;
 
 #endif //TOOLS_H
