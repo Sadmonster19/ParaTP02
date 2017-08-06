@@ -3,6 +3,7 @@
 Rat::Rat(Position p_)
     : Character(p_)
 {
+	initPossibleMovement();
 }
 
 void Rat::initPossibleMovement() {

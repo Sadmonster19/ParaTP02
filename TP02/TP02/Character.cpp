@@ -10,6 +10,10 @@ Position Character::getPosition() {
 	return position;
 }
 
+void Character::setPosition(Position p) {
+	position = p;
+}
+
 vector<Position> Character::getPossibleMovement() {
 	return possibleMovement;
 }
@@ -18,6 +22,14 @@ vector<Position> Character::getBestPath() {
 	return bestPath;
 }
 
+MapStructure Character::getInitialMap() {
+	return initialMap;
+}
+
+MapObject Character::getMapObjectForPosition(Position p) {
+	return initialMap[p.y][p.x];
+}
+
 void Character::findBestPath(MapObject mo) {
-	bestPath = AStar::findBestPath(initialMap, this, mo);
+	bestPath = AStar::findBestPath(this, mo);
 }
