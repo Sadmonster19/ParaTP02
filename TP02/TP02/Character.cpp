@@ -14,6 +14,10 @@ vector<Position> Character::getPossibleMovement() {
 	return possibleMovement;
 }
 
+vector<Position> Character::getBestPath() {
+	return bestPath;
+}
+
 void Character::findBestPath(MapStructure ms, MapObject mo) {
 	bestPath = AStar::findBestPath(ms, this, mo);
 }

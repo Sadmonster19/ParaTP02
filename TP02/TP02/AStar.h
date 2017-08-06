@@ -15,18 +15,23 @@ struct Node {
 	std::shared_ptr<Node> parent;	//Needed to reconstruct the path
 
 	Node(int _score, Position _p, int _movementCost, std::shared_ptr<Node> _parent)
-		: score{ _score }, p{ _p }, movementCost{_movementCost}, parent{ _parent }
+		: score{ _score }, p{ _p }, movementCost{ _movementCost }, parent{ _parent }
 	{}
 
 	bool operator==(const Node& n) {
 		return p == n.p;
 	}
+};
 
-	bool operator<(const Node& n) const
-	{
-		return score < n.score;
+//Needed a Compare structure to have an ordered set based on the score and eliminate duplicates
+struct Compare {
+	bool operator()(std::shared_ptr<Node> a, std::shared_ptr<Node> b) const {
+		return a->score < b->score;
 	}
 };
+
+
+typedef set<std::shared_ptr<Node>, Compare> SetNode;
 
 class AStar
 {
@@ -40,8 +45,8 @@ private:
 	static vector<Position> getAllPositionForMapObject(MapStructure, MapObject);
 	static int findClosestDistanceToGoal(Position, vector<Position>);
 
-	static bool doesSetContains(set<std::shared_ptr<Node>>&, std::shared_ptr<Node>);
-	static void removeBiggestScoreForNode(set<std::shared_ptr<Node>>&, std::shared_ptr<Node>);
+	static bool doesSetContains(SetNode&, std::shared_ptr<Node>);
+	static void removeBiggestScoreForNode(SetNode&, std::shared_ptr<Node>);
 };
 
 #endif //ASTAR_H

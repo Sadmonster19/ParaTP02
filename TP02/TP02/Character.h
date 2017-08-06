@@ -22,11 +22,12 @@ protected:
 
 	virtual void initPossibleMovement() = 0;
 	virtual bool move(Position) = 0;
-	void findBestPath(MapStructure, MapObject);
 
 public:
+	void findBestPath(MapStructure, MapObject);
 	Position getPosition();
 	vector<Position> getPossibleMovement();
+	vector<Position> getBestPath();
 };
 
 #endif //CHARACTER_H
