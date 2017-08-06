@@ -28,16 +28,17 @@ public:
     void setInitialMap();
     MapStructure getInitialMap();
 	Position getPosition();
+	void setPosition(Position);
 	unsigned int getX() {
 		return position.x;
 	}
 	unsigned int getY() {
 		return position.y;
 	}
-	void setPosition(Position pos) {
-		position = pos;
-	}
+
 	void findBestPath(MapObject);
+	MapStructure getInitialMap();
+	MapObject getMapObjectForPosition(Position);
 	vector<Position> getPossibleMovement();
 	vector<Position> getBestPath();
 
