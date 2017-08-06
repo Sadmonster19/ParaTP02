@@ -103,12 +103,11 @@ vector<Position> AStar::getAllPositionForMapObject(MapStructure ms, MapObject mo
 }
 
 int AStar::findClosestDistanceToGoal(Position p, vector<Position> goals) {
-	int closest = std::numeric_limits<int>::max();
+    auto element = std::min_element(goals.begin(), goals.begin(), [&p](Position& p1, Position& p2) {
+        return p.getDistance(p1) < p.getDistance(p2);
+    });
 
-	for (Position g : goals)
-		closest = min(closest, g.getDistance(p));
-
-	return closest;
+    return p.getDistance(*element);
 }
 
 bool AStar::doesSetContains(SetNodePtr& ns, std::shared_ptr<Node> toFind) {

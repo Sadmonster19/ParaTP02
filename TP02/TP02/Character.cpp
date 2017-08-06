@@ -39,22 +39,22 @@ void Character::findBestPath(MapObject mo) {
 void Character::setInitialMap() {
     int height;
     int width;
-    
+
     int mapInfo[2];
     MPI_Recv(&mapInfo, _countof(mapInfo), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     height = mapInfo[0];
     width = mapInfo[1];
-    
+
     int arrayDim = height*width;
     cout << arrayDim << endl;
 
     int* map = new (int[arrayDim]);
-    
+
     MPI_Recv(map, arrayDim, MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     cout << height << "x" << width << endl;
-    
+
     int i = 0;
     for (int y = 0; y < height; ++y) {
         vector<MapObject> line;
@@ -66,10 +66,6 @@ void Character::setInitialMap() {
     }
     cout << i << endl;
     cout << "marde" << endl;
-}
-
-MapStructure Character::getInitialMap() {
-    return initialMap;
 }
 
 void Character::displayMap() {

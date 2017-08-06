@@ -2,7 +2,7 @@
 #define CHARACTER_H
 
 #include "Tools.h"
-#include <mpi.h>
+#include "MPIHandler.h"
 #include <mutex>
 
 using namespace std;
@@ -37,7 +37,6 @@ public:
 	}
 
 	void findBestPath(MapObject);
-	MapStructure getInitialMap();
 	MapObject getMapObjectForPosition(Position);
 	vector<Position> getPossibleMovement();
 	vector<Position> getBestPath();

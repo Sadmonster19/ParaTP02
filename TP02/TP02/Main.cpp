@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         
         cout << e.getRank() << endl;
         rat.setInitialMap();
-        //rat.displayMap();
+        rat.displayMap();
         //rat.findBestPath(CHEESE);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
