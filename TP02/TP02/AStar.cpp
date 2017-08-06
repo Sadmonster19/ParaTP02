@@ -19,7 +19,7 @@ vector<Position> AStar::findBestPath(MapStructure ms, Character* c, MapObject go
 		for (Position p : c->getPossibleMovement()) {
 			Position nextP = current->p + p;
 
-			if (!WorldMap::isObstacle(ms[nextP.y][nextP.x])) {
+			if (!isObstacle(ms[nextP.y][nextP.x])) {
 				int t = findClosestDistanceToGoal(nextP, goals);
 				int nextScore = findClosestDistanceToGoal(nextP, goals) + current->movementCost + 1;
 
@@ -46,13 +46,17 @@ vector<Position> AStar::buildPath(std::shared_ptr<Node> n) {
 		n = n->parent;
 	}
 	path.emplace_back(n->p);
-	std::reverse(path.begin(), path.end());
+	//std::reverse(path.begin(), path.end());
 
 	return path;
 }
 
 bool AStar::isGoal(MapObject current, MapObject goal) {
 	return current == goal;
+}
+
+bool AStar::isObstacle(MapObject current) {
+    return current == WALL;
 }
 
 vector<Position> AStar::getAllPositionForMapObject(MapStructure ms, MapObject mo) {

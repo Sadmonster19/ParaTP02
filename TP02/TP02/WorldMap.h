@@ -35,11 +35,10 @@ private:
 public:
     void initCharacters();
 
-	static bool isObstacle(MapObject);
-    
     vector<Position> getRatsPosition();
     vector<Position> getRatHuntersPosition();
     void displayMap();
+    //void sendInitialMapToCharacter();
     bool isGameDone();
     void endGame(bool done);
 	void endGame() {

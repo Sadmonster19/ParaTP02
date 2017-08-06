@@ -5,6 +5,7 @@
 #include "WorldMap.h"
 #include "Rat.h"
 #include "RatHunter.h"
+#include "AStar.h"
 
 //argv : 0 == TP02.exe, 1 == rat, 2 == ratHunter, 3 == file name of map 
 //0 == map, 1-ratcount == ratHunter, racount-ratcount+huntercount == rat 
@@ -35,12 +36,14 @@ int main(int argc, char* argv[]) {
 		int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
+        //rat.getInitialMap();
+        rat.findBestPath(RAT);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
-		//Wait until you receive that the gamse has started
-		int res[1];
-		MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+		//Wait until you receive that the game has started
+		int res;
+        MPI_Recv(&res, 1, MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
 			Position wanted = Position(rat.getX(), rat.getY() + 1); //Normally would find the best path

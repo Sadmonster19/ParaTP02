@@ -16,11 +16,13 @@ protected:
 	Position position;
 	vector<Position> possibleMovement;
 	vector<Position> bestPath;
+    MapStructure initialMap;
 
 	virtual void initPossibleMovement() = 0;
 	virtual bool move(Position) = 0;
 
 public:
+    //void getInitialMap();
 	Position getPosition();
 	unsigned int getX() {
 		return position.x;
@@ -31,7 +33,7 @@ public:
 	void setPosition(Position pos) {
 		position = pos;
 	}
-	void findBestPath(MapStructure, MapObject);
+	void findBestPath(MapObject);
 	vector<Position> getPossibleMovement();
 	vector<Position> getBestPath();
 

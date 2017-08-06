@@ -18,6 +18,6 @@ vector<Position> Character::getBestPath() {
 	return bestPath;
 }
 
-void Character::findBestPath(MapStructure ms, MapObject mo) {
-	bestPath = AStar::findBestPath(ms, this, mo);
+void Character::findBestPath(MapObject mo) {
+	bestPath = AStar::findBestPath(initialMap, this, mo);
 }
