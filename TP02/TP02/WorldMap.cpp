@@ -5,6 +5,8 @@
 #include <mpi.h>
 
 #include "WorldMap.h"
+#include "Rat.h"
+#include "RatHunter.h"
 
 WorldMap::WorldMap()
     : ratsCount{}, ratHuntersCount{}

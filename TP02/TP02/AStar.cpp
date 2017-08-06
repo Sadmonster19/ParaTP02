@@ -3,7 +3,6 @@
 
 #include "AStar.h"
 
-
 vector<Position> AStar::findBestPath(MapStructure ms, Character* c, MapObject goal) {
 	set<std::shared_ptr<Node>> open;
 	open.insert(std::make_shared<Node>(0, c->getPosition(), 0, nullptr));

@@ -2,6 +2,7 @@
 #define CHARACTER_H
 
 #include "Movement.h"
+#include "WorldMap.h"
 
 #include <vector>
 
@@ -11,7 +12,7 @@ class Character
 {
 public:
     Character() = default;
-    Character(unsigned int positionX_, unsigned int positionY_);
+    Character(Position);
     ~Character() = default;
 
 protected:
@@ -21,7 +22,7 @@ protected:
 
 	virtual void initPossibleMovement() = 0;
 	virtual bool move(Position) = 0;
-	virtual void findBestPath(Position) = 0;
+	void findBestPath(MapStructure, MapObject);
 
 public:
 	Position getPosition();

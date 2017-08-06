@@ -1,7 +1,8 @@
 #include "Character.h"
+#include "AStar.h"
 
-Character::Character(unsigned int positionX_, unsigned int positionY_)
-    : position{ positionX_, positionY_ }
+Character::Character(Position p_)
+    : position{ p_ }
 {
 }
 
@@ -13,3 +14,6 @@ vector<Position> Character::getPossibleMovement() {
 	return possibleMovement;
 }
 
+void Character::findBestPath(MapStructure ms, MapObject mo) {
+	bestPath = AStar::findBestPath(ms, this, mo);
+}

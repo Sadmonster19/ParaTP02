@@ -6,6 +6,7 @@
 #include "Movement.h"
 
 #include <memory>
+#include <set>
 
 struct Node {
 	int score;						//movementCost + distance from current to goal (with/without obstacle)

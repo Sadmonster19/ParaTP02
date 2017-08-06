@@ -1,7 +1,7 @@
 #include "RatHunter.h"
 
-RatHunter::RatHunter(unsigned int positionX_, unsigned int positionY_)
-    : Character(positionX_, positionY_)
+RatHunter::RatHunter(Position p_)
+	: Character(p_)
 {
 }
 
@@ -16,9 +16,4 @@ bool RatHunter::move(Position pos)
 {
     //TODO: ASK MAP TO MOVE THERE
     return false;
-}
-
-void RatHunter::findBestPath(Position pos)
-{
-
 }

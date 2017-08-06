@@ -1,11 +1,10 @@
-#ifndef WOLRDMAP_H
+#ifndef WORLDMAP_H
 #define WORLDMAP_H
 
 #include <string>
 #include <vector>
 
-#include "Rat.h"
-#include "RatHunter.h"
+#include "Movement.h"
 
 using namespace std;
 
