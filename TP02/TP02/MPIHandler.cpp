@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "MPIHandler.h"
 
 MPIHandler::MPIHandler(int& argc, char* argv[]) {

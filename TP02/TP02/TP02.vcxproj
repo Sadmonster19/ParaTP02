@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="MPIHandler.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Character.cpp" />
@@ -153,7 +154,9 @@
     <ClCompile Include="WorldMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Tools.h" />
     <ClInclude Include="MPIHandler.h" />
     <ClInclude Include="Rat.h" />
     <ClInclude Include="RatHunter.h" />

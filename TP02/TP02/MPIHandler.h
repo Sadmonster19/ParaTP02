@@ -2,7 +2,7 @@
 #define MPIHANDLER_H
 
 #include <mpi.h>
-#include <iostream>
+
 
 class MPIHandler
 {

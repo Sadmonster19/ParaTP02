@@ -1,7 +1,10 @@
+#include <iostream>
+
 #include "mpi.h"
 #include "MPIHandler.h"
 #include "WorldMap.h"
-#include <iostream>
+#include "Rat.h"
+#include "RatHunter.h"
 
 //argv : 0 == TP02.exe, 1 == rat, 2 == ratHunter, 3 == file name of map 
 //0 == map, 1-ratcount == ratHunter, racount-ratcount+huntercount == rat 
@@ -31,7 +34,8 @@ int main(int argc, char* argv[]) {
 		//Get info to initialise rat
 		int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        Rat rat{(unsigned int)infos[0], (unsigned int)infos[1]};
+        Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
+
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
 		//Wait until you receive that the gamse has started
@@ -65,8 +69,8 @@ int main(int argc, char* argv[]) {
         RatHunter* ratHunterCharacter;
         int res[3];
         MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        if (res[0] == ratHunter) {
-            ratHunterCharacter = &RatHunter{ (unsigned int)res[1], (unsigned int)res[2] };
+        if (res[0] == MapObject::HUNTER) {
+            ratHunterCharacter = &RatHunter{ Position{ res[1], res[2] } };
         }
 		Position pos = ratHunterCharacter->getPosition();
 		cout << "Process " << e.getRank() << ", I am a Cat and my position is (" << pos.x << ", " << pos.y << ")" << endl;

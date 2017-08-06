@@ -1,10 +1,16 @@
-#include "WorldMap.h"
+#include <iostream>
+#include <fstream>
 #include <regex>
+#include <sstream>
+#include <mpi.h>
+
+#include "WorldMap.h"
+#include "Rat.h"
+#include "RatHunter.h"
 
 WorldMap::WorldMap()
     : ratsCount{}, ratHuntersCount{}
 {
-
 }
 
 WorldMap::WorldMap(string fileName)
@@ -15,7 +21,7 @@ WorldMap::WorldMap(string fileName)
 
 void WorldMap::getInitialMap(string mapName) {
     string temp = string(
-        istreambuf_iterator<char>{ifstream{ MAPFILE_ROOT + mapName, ios::binary }},
+        istreambuf_iterator<char>{ifstream{ mapName, ios::binary }},
         istreambuf_iterator<char>{}
     );
 
@@ -35,21 +41,21 @@ void WorldMap::fillMapStructure(string mapString) {
         switch (*first) 
         {
         case '#':
-            temp.push_back(wall);
+            temp.push_back(WALL);
             break;
         case 'R':
-            temp.push_back(rat);
+            temp.push_back(RAT);
             ratsCount++;
             break;
         case 'C':
-            temp.push_back(ratHunter);
+            temp.push_back(HUNTER);
             ratHuntersCount++;
             break;
         case 'F':
-            temp.push_back(cheese);
+            temp.push_back(CHEESE);
             break;
         case ' ':
-            temp.push_back(emptySpace);
+            temp.push_back(EMPTY);
             break;
         case '\r':
             break;
@@ -65,11 +71,10 @@ void WorldMap::fillMapStructure(string mapString) {
 vector<Position> WorldMap::getRatsPosition() {
     vector<Position> rats;
     
-    for (unsigned int y = 0; y < mapData.size(); y++) {
-        for (unsigned int x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == rat) {
-                Position p{ x, y };
-                rats.push_back(p);
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++)
+            if (mapData[y][x] == RAT) {
+                rats.push_back(Position { static_cast<int>(x), static_cast<int>(y) });
             }
     }
     return rats;
@@ -80,9 +85,8 @@ vector<Position> WorldMap::getRatHuntersPosition() {
 
     for (unsigned int y = 0; y < mapData.size(); y++) {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == ratHunter) {
-                Position p{ x, y };
-                ratHunters.push_back(p);
+            if (mapData[y][x] == HUNTER) {
+				ratHunters.push_back(Position{ static_cast<int>(x), static_cast<int>(y) });
             }
     }
     return ratHunters;
@@ -95,22 +99,22 @@ void WorldMap::displayMap() {
         for (unsigned int x = 0; x < mapData[y].size(); x++) {
             switch (mapData[y][x])
             {
-            case wall:
+            case WALL:
                 map += '#';
                 break;
-            case rat:
+            case RAT:
                 map += 'R';
                 break;
-            case ratHunter:
+            case HUNTER:
                 map += 'C';
                 break;
-            case cheese:
+            case CHEESE:
                 map += 'F';
                 break;
-            case emptySpace:
+            case EMPTY:
                 map += ' ';
                 break;
-			case door:
+			case DOOR:
 				map += 'D';
 				break;
             default:
@@ -140,7 +144,8 @@ void WorldMap::initCharacters() {
 			Position pos = position;
 			bool isAlive = true;
 			//Send information to initiate the rat
-			unsigned int ratInfo[2] = { pos.x, pos.y };
+			int ratInfo[2] = { pos.x, pos.y };
+			cout << "YAY: " << ratInfo[2] << " - " << (MapStructure*)ratInfo[2] << endl;
 			MPI_Send(ratInfo, _countof(ratInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
 
 			//Wait untile the game is started
@@ -172,7 +177,7 @@ void WorldMap::initCharacters() {
         id++;
     }
     for (auto pos : ratHuntersPosition) {
-        int ratHunterInfo[3] = { ratHunter, pos.x, pos.y };
+        int ratHunterInfo[3] = { HUNTER, pos.x, pos.y };
 
         MPI_Send(ratHunterInfo, _countof(ratHunterInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
         id++;
@@ -204,37 +209,37 @@ bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
 
 	switch (getMapElement(goal))
 	{
-	case rat:
-		if (character == ratHunter) {
-			changeElement(goal, emptySpace);
+	case RAT:
+		if (character == HUNTER) {
+			changeElement(goal, EMPTY);
 			swapElements(start, goal);
 			isAlive = false;
 			success = true;
 		}
 		break;
-	case ratHunter:
-		if (character == rat) {
-			changeElement(start, emptySpace);
+	case HUNTER:
+		if (character == RAT) {
+			changeElement(start, EMPTY);
 			isAlive = false;
 			success = true;
 		}
 		break;
-	case cheese:
-		if (character == rat) {
+	case CHEESE:
+		if (character == RAT) {
 			//Eat cheese -- Replace cheese with EmptySpace
-			changeElement(goal, emptySpace);
+			changeElement(goal, EMPTY);
 			swapElements(start, goal);
 			success = true;
 		}
 		break;
-	case emptySpace:
+	case EMPTY:
 		swapElements(start, goal);
 		success = true;
 		break;
-	case door:
-		if (character == rat) {
+	case DOOR:
+		if (character == RAT) {
 			//Rat is out of the game -- Replace rat with EmptySpace
-			changeElement(start, emptySpace);
+			changeElement(start, EMPTY);
 			isAlive = false;
 			success = true;
 		}
@@ -253,22 +258,26 @@ void WorldMap::findDoors() {
 	size_t lineCount = mapData.size();
 	//Doors can be on first line
 	for (size_t i = 0; i < mapData[0].size(); ++i) {
-		if (mapData[0][i] == emptySpace)
-			mapData[0][i] = door;
+		if (mapData[0][i] == EMPTY)
+			mapData[0][i] = DOOR;
 	}
 
 	//Doors can be on last line
 	for (size_t i = 0; i < mapData[mapData.size()-1].size()-1; ++i) {
-		if (mapData[lineCount-1][i] == emptySpace)
-			mapData[lineCount-1][i] = door;
+		if (mapData[lineCount-1][i] == EMPTY)
+			mapData[lineCount-1][i] = DOOR;
 	}
 	//Doors can be on first or last of each line
 	for (size_t i = 1; i < mapData.size()-1; ++i) {
 		size_t lineSize = mapData[i].size();
 
-		if (mapData[i][0] == emptySpace)
-			mapData[i][0] = door;
-		if (mapData[i][lineSize-1] == emptySpace)
-			mapData[i][lineSize-1] = door;
+		if (mapData[i][0] == EMPTY)
+			mapData[i][0] = DOOR;
+		if (mapData[i][lineSize-1] == EMPTY)
+			mapData[i][lineSize-1] = DOOR;
 	}
+}
+
+bool WorldMap::isObstacle(MapObject current) {
+	return current == WALL;
 }

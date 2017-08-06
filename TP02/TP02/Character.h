@@ -1,38 +1,30 @@
-#ifndef MAPELEMENT_H
-#define MAPELEMENT_H
+#ifndef CHARACTER_H
+#define CHARACTER_H
 
-#include <iostream>
-#include <mpi.h>
+#include "Tools.h"
+#include "WorldMap.h"
+
 #include <vector>
 
 using namespace std;
-
-struct Position
-{
-    unsigned int x;
-    unsigned int y;
-
-	Position(unsigned int _x, unsigned int _y) : x{ _x }, y{ _y } {}
-};
 
 class Character
 {
 public:
     Character() = default;
-    Character(unsigned int positionX_, unsigned int positionY_);
+    Character(Position);
     ~Character() = default;
 
 protected:
 	Position position;
+	vector<Position> possibleMovement;
 	vector<Position> bestPath;
 
+	virtual void initPossibleMovement() = 0;
 	virtual bool move(Position) = 0;
-	virtual void findBestPath(Position) = 0;
 
 public:
-    Position getPosition() {
-        return position;
-    }
+	Position getPosition();
 	unsigned int getX() {
 		return position.x;
 	}
@@ -42,6 +34,10 @@ public:
 	void setPosition(Position pos) {
 		position = pos;
 	}
+	void findBestPath(MapStructure, MapObject);
+	vector<Position> getPossibleMovement();
+	vector<Position> getBestPath();
+
 };
 
-#endif //MAPELEMENT_H
+#endif //CHARACTER_H
