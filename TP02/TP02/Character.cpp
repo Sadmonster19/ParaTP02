@@ -24,6 +24,11 @@ vector<Position> Character::getBestPath() {
 	return bestPath;
 }
 
+void Character::popLastPosition() {
+    if (!bestPath.empty())
+        bestPath.pop_back();
+}
+
 MapStructure Character::getInitialMap() {
 	return initialMap;
 }
@@ -41,19 +46,16 @@ void Character::setInitialMap() {
     int width;
 
     int mapInfo[2];
-    MPI_Recv(&mapInfo, _countof(mapInfo), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&mapInfo, _countof(mapInfo), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     height = mapInfo[0];
     width = mapInfo[1];
 
     int arrayDim = height*width;
-    cout << arrayDim << endl;
 
     int* map = new (int[arrayDim]);
 
-    MPI_Recv(map, arrayDim, MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-    cout << height << "x" << width << endl;
+    MPI_Recv(map, arrayDim, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     int i = 0;
     for (int y = 0; y < height; ++y) {
@@ -64,8 +66,6 @@ void Character::setInitialMap() {
         }
         initialMap.push_back(line);
     }
-    cout << i << endl;
-    cout << "marde" << endl;
 }
 
 void Character::displayMap() {

@@ -40,6 +40,7 @@ public:
 	MapObject getMapObjectForPosition(Position);
 	vector<Position> getPossibleMovement();
 	vector<Position> getBestPath();
+    void popLastPosition();
 
 };
 

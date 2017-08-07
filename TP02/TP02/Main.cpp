@@ -39,31 +39,32 @@ int main(int argc, char* argv[]) {
 
 		//Get info to initialise rat
 		int infos[2];
-        MPI_Recv(&infos, _countof(infos), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        MPI_Recv(&infos, _countof(infos), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
         
-        cout << e.getRank() << endl;
         rat.setInitialMap();
         rat.displayMap();
-        //rat.findBestPath(CHEESE);
+        rat.findBestPath(CHEESE);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
 		//Wait until you receive that the game has started
 		int res;
-        MPI_Recv(&res, 1, MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        MPI_Recv(&res, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
-			Position wanted = Position(rat.getX(), rat.getY() + 1); //Normally would find the best path
+            cout << rat.getBestPath().back().x << "," << rat.getBestPath().back().y << endl;
+            Position wanted = rat.getBestPath().back(); //Normally would find the best path
 
 			unsigned int movement[2] = {wanted.x, wanted.y};
-			MPI_Send(&movement, _countof(movement), MPI_2INT, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(&movement, _countof(movement), MPI_INT, 0, 0, MPI_COMM_WORLD);
 
 			int result[3];	//Succes, gameDone, isAlive
-			MPI_Recv(&result, _countof(result), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+			MPI_Recv(&result, _countof(result), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);   
 
 			if (result[0]) {	//Move success
 				rat.setPosition(wanted);
+                rat.popLastPosition();
 				cout << "Process " << e.getRank() << ", new position (" << rat.getPosition().x << ", " << rat.getPosition().y << ")" << endl;		
 			}
 			if (result[1]) {	//Game is over
@@ -79,7 +80,7 @@ int main(int argc, char* argv[]) {
     else if(e.getRank() > e.getRatCount()){
         RatHunter* ratHunterCharacter;
         int res[3];
-        MPI_Recv(&res, _countof(res), MPI_2INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        MPI_Recv(&res, _countof(res), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         if (res[0] == MapObject::HUNTER) {
             ratHunterCharacter = &RatHunter{ Position{ res[1], res[2] } };
         }

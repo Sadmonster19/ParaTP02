@@ -68,7 +68,6 @@ vector<Position> AStar::buildPath(std::shared_ptr<Node> n) {
 		path.emplace_back(n->p);
 		n = n->parent;
 	}
-	path.emplace_back(n->p);
 
 	return path;
 }
