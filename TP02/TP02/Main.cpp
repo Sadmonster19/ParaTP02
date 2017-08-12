@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
         bool gameOver = false;
         bool isAlive = true;
 
-        //Get info to initialise ratHunter
+        //Get info to initialise rat hunter
         int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         RatHunter hunter{ Position((unsigned int)infos[0], (unsigned int)infos[1]) };

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <regex>
 #include <sstream>
-#include <mpi.h>
+//#include <mpi.h>
 #include <new>
 
 
@@ -134,7 +134,7 @@ void WorldMap::playMap() {
 
 			//Send information to initiate the rat
 			int ratInfo[2] = { pos.x, pos.y };
-			MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+			//MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
             rats[id] = pos;
 
@@ -145,7 +145,7 @@ void WorldMap::playMap() {
 
 			//Tell rat the game has started
 			int start = 1;
-			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
+		//	MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
                 sendRatsInPanic(id);
@@ -155,7 +155,7 @@ void WorldMap::playMap() {
 
 				//Ask for the rat movement
 				unsigned int movement[2];
-				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+				//MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
 
 				bool success = moveCharacter(pos, goal, isAlive);
@@ -170,9 +170,11 @@ void WorldMap::playMap() {
 
                 isAlive = isRatAlive(id);
 				
+				gameDone = getMapObjectPositions(MapObject::CHEESE).empty();
                 //Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
-				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
+				//MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
+
 			}
 		});
         id++;
@@ -184,7 +186,7 @@ void WorldMap::playMap() {
 
             //Send information to initiate the ratHunter
             int hunterInfo[2] = { pos.x, pos.y };
-            MPI_Send(hunterInfo, _countof(hunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+           // MPI_Send(hunterInfo, _countof(hunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
             sendInitialMapToCharacter(id);
 
@@ -193,7 +195,7 @@ void WorldMap::playMap() {
 
             //Tell ratHunter the game has started
             int start = 1;
-            MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
+           // MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
             while (!gameDone) {
                 //Get next move
@@ -206,7 +208,7 @@ void WorldMap::playMap() {
 
                 //Ask for the ratHunter movement
                 unsigned int movement[2];
-                MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+               // MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
                 Position goal(movement[0], movement[1]);
 
                 bool success = moveCharacter(pos, goal, isAlive);
@@ -221,9 +223,10 @@ void WorldMap::playMap() {
 
                 gameDone = getMapObjectPositions(RAT).empty();
 
+				gameDone = getMapObjectPositions(MapObject::RAT).empty();
                 //Return to the rat the result of the move request
                 int response[2] = { success, gameDone };
-                MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
+               // MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
             }
         });
         id++;
@@ -328,7 +331,7 @@ void WorldMap::sendInitialMapToCharacter(int id) {
     int width = mapData[0].size();
 
     int mapInfo[2]{height, width};
-    MPI_Send(mapInfo, _countof(mapInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+   // MPI_Send(mapInfo, _countof(mapInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
     int arrayDim = height*width;
 
@@ -343,19 +346,19 @@ void WorldMap::sendInitialMapToCharacter(int id) {
             i++;
         }
     }
-    MPI_Send(map, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+    //MPI_Send(map, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
 }
 
 void WorldMap::sendMapObjectPositions(int id) {
-    int object;
-    MPI_Recv(&object, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-    
+  //  int object;
+    //MPI_Recv(&object, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+ /*   
     vector<Position> objectPositions = getMapObjectPositions(static_cast<MapObject>(object));
 
     int arrayDim = objectPositions.size() * 2;
     int* positions = new (int[arrayDim]);
 
-    MPI_Send(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD);
+   // MPI_Send(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
     int i = 0;
     for (auto position : objectPositions) {
@@ -364,7 +367,8 @@ void WorldMap::sendMapObjectPositions(int id) {
         i += 2;
     }
 
-    MPI_Send(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+   // MPI_Send(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+	*/
 }
 
 vector<Position> WorldMap::getHunterScream(int id) {
@@ -375,16 +379,16 @@ vector<Position> WorldMap::getHunterScream(int id) {
     if (scream) {
 
         int arrayDim;
-        MPI_Recv(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+       // MPI_Recv(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         
         int* positions = new (int[arrayDim]);
-        MPI_Recv(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+       // MPI_Recv(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
         for (int i = 0; i < arrayDim; i += 2) {
             ratsScreamedAt.push_back(Position{ positions[i], positions[i + 1] });
         }
     }
-
+	*/
     return ratsScreamedAt;
 }
 
