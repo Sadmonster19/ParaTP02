@@ -136,6 +136,8 @@ void WorldMap::playMap() {
 			int ratInfo[2] = { pos.x, pos.y };
 			MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
+            rats[id] = pos;
+
             sendInitialMapToCharacter(id);
 
 			//Wait untile the game is started
@@ -158,11 +160,16 @@ void WorldMap::playMap() {
 
 				bool success = moveCharacter(pos, goal, isAlive);
 				
-				if (success) pos = goal;
+                if (success) {
+                    pos = goal;
+                    rats[id] = pos;
+                }
 
                 gameDone = getMapObjectPositions(CHEESE).empty();
 
-				//Return to the rat the result of the move request
+                isAlive = isRatAlive(id);
+				
+                //Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
 			}
@@ -203,7 +210,11 @@ void WorldMap::playMap() {
 
                 bool success = moveCharacter(pos, goal, isAlive);
 
-                if (success) pos = goal;
+                if (success) {
+                    pos = goal;
+                    if (!isAlive)
+                        ratToKill.push_back(getRatIdFromPosition(pos));
+                }
 
                 gameDone = getMapObjectPositions(RAT).empty();
 
@@ -395,4 +406,22 @@ void WorldMap::sendRatsInPanic(int id) {
     }
 
     MPI_Send(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+}
+
+int WorldMap::getRatIdFromPosition(Position pos) {
+    for (auto it = rats.begin(); it != rats.end(); ++it) {
+        if (it->second == pos)
+            return it->first;
+    }
+    return 0;
+}
+
+bool WorldMap::isRatAlive(int id) {
+    auto it = std::find(ratToKill.begin(), ratToKill.end(), id);
+    if (it != ratToKill.end()) {
+        ratToKill.erase(it);
+        return false;
+    }
+    else
+        return true;
 }

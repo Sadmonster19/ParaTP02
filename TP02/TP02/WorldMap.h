@@ -18,6 +18,8 @@ public:
     MapStructure mapData;
 	vector<thread> th;
     map<int, vector<Position>> ratToAlert;
+    map<int, Position> rats;
+    vector<int> ratToKill;
 	bool gameDone = false;
 	bool gameReady = false;
 
@@ -36,7 +38,7 @@ private:
 
 public:
     void playMap();
-    
+    int getRatIdFromPosition(Position pos);
     vector<Position> getMapObjectPositions(MapObject object);
     void displayMap();
     void sendMapObjectPositions(int id);
@@ -44,6 +46,7 @@ public:
     vector<Position> getHunterScream(int id);
     void sendInitialMapToCharacter(int id);
     bool isGameDone();
+    bool isRatAlive(int id);
     void endGame(bool done);
 	void endGame() {
 		gameDone = true;
