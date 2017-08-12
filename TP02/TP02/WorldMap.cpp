@@ -162,6 +162,7 @@ void WorldMap::playMap() {
 				
                 if (success) {
                     pos = goal;
+                    lock_guard<mutex> lock(m);
                     rats[id] = pos;
                 }
 
@@ -212,8 +213,10 @@ void WorldMap::playMap() {
 
                 if (success) {
                     pos = goal;
-                    if (!isAlive)
+                    if (!isAlive) {
+                        lock_guard<mutex> lock(m);
                         ratToKill.push_back(getRatIdFromPosition(pos));
+                    }
                 }
 
                 gameDone = getMapObjectPositions(RAT).empty();
