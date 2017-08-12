@@ -29,7 +29,7 @@ bool Character::canWalkOn(Position p) {
 }
 
 Position Character::findNextMovement(vector<Position> goals) {
-	return AStar::findBestNextMovement(this, goals);
+    return AStar::findBestNextMovement(this, goals);
 }
 
 void Character::setInitialMap(int id) {

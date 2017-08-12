@@ -39,17 +39,16 @@ int main(int argc, char* argv[]) {
         
         rat.setInitialMap(e.getRank());
 
-		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
+		cout << "Process " << e.getRank() << ", IM PICKLE RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
 		//Wait until you receive that the game has started
 		int res;
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
-            Position wanted = rat.findNextMovement(rat.getMapObjectPositions(CHEESE, e.getRank())); //Normally would find the best path
 
-			unsigned int movement[2] = {wanted.x, wanted.y};
-			MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
+
+            Position wanted = rat.move(e.getRank());
 
 			int result[3];	//Succes, gameDone, isAlive
 			MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);   
@@ -86,12 +85,9 @@ int main(int argc, char* argv[]) {
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
         while (!gameOver && isAlive) {
-            Position wanted = hunter.findNextMovement(hunter.getMapObjectPositions(RAT, e.getRank())); //Normally would find the best path
+            Position wanted = hunter.move(e.getRank());
 
-            unsigned int movement[2] = { wanted.x, wanted.y };
-            MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
-
-            int result[3];	//Succes, gameDone, isAlive
+            int result[2];	//Succes, gameDone, isAlive
             MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
             if (result[0]) {	//Move success
@@ -101,10 +97,6 @@ int main(int argc, char* argv[]) {
             if (result[1]) {	//Game is over
                 gameOver = true;
                 cout << "Process " << e.getRank() << ", GAMEOVER" << endl;
-            }
-            if (!result[2]) {	//Rat is dead!
-                isAlive = false;
-                cout << "Process " << e.getRank() << ", IS DEAD" << endl;
             }
         }
     }

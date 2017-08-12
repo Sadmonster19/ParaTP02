@@ -20,7 +20,6 @@ protected:
     MapStructure initialMap;
 
 	virtual void initPossibleMovement() = 0;
-	virtual bool move(Position) = 0;
 
 public:
     void displayMap();

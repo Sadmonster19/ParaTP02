@@ -17,7 +17,8 @@ private:
 
 public:
 	void initPossibleMovement() override;
-	bool move(Position) override;
+	Position move(int id);
+    bool isNearRatHunter(vector<Position>);
 };
 
 #endif //RAT_H

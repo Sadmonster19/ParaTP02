@@ -60,11 +60,12 @@ vector<Position> AStar::findAllRatsInZone(RatHunter rh, vector<Position> rats) {
 }
 
 Position AStar::findNextMovement(std::shared_ptr<Node> n) {
-	while (n->parent != nullptr) {
-		n = n->parent;
-	}
-
-	return n->p;
+    Position p;
+    while (n->parent != nullptr) {
+        p = n->p;
+        n = n->parent;
+    }
+    return p;
 }
 
 bool AStar::isGoal(Position current, vector<Position> goals) {

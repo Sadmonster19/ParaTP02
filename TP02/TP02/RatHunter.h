@@ -18,7 +18,7 @@ public:
 
 public:
 	void initPossibleMovement() override;
-    bool move(Position) override;
+    Position move(int id);
 
 	vector<Position> findAllRatsInZone(vector<Position>);
 };

@@ -175,8 +175,8 @@ void WorldMap::initCharacters() {
             bool isAlive = true;
 
             //Send information to initiate the ratHunter
-            int ratHunterInfo[2] = { pos.x, pos.y };
-            MPI_Send(ratHunterInfo, _countof(ratHunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+            int hunterInfo[2] = { pos.x, pos.y };
+            MPI_Send(hunterInfo, _countof(hunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
             sendInitialMapToCharacter(id);
 
@@ -187,7 +187,7 @@ void WorldMap::initCharacters() {
             int start = 1;
             MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
-            while (!gameDone && isAlive) {
+            while (!gameDone) {
                 //Get next move
                 sendMapObjectPositions(id);
 
@@ -198,16 +198,14 @@ void WorldMap::initCharacters() {
 
                 bool success = moveCharacter(pos, goal, isAlive);
 
-                displayMap();
-
                 if (success) pos = goal;
 
                 //Return to the rat the result of the move request
-                int response[3] = { success, gameDone, isAlive };
+                int response[2] = { success, gameDone };
                 MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
             }
             if (gameDone) {
-                int response[3] = { false, gameDone, isAlive };
+                int response[2] = { false, gameDone };
                 MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
             }
         });
