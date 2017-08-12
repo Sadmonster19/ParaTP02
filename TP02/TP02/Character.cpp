@@ -28,7 +28,7 @@ bool Character::canWalkOn(Position p) {
 	return initialMap[p.y][p.x] != MapObject::WALL;
 }
 
-Position Character::findBestMovement(vector<Position> goals) {
+Position Character::findNextMovement(vector<Position> goals) {
 	return AStar::findBestNextMovement(this, goals);
 }
 
@@ -46,7 +46,6 @@ void Character::setInitialMap(int id) {
 
     int* map = new (int[arrayDim]);
 
-    cout << id << " : " << arrayDim << endl;
     MPI_Recv(map, arrayDim, MPI_INT, 0, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     int i = 0;
@@ -58,6 +57,25 @@ void Character::setInitialMap(int id) {
         }
         initialMap.push_back(line);
     }
+}
+
+vector<Position> Character::getMapObjectPositions(MapObject object, int id) {
+    vector<Position> objectPositions;
+    int arrayDim;
+    int obj = static_cast<int>(object);
+
+    MPI_Send(&obj, 1, MPI_INT, 0, id, MPI_COMM_WORLD);
+
+    MPI_Recv(&arrayDim, 1, MPI_INT, 0, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    int* positions = new (int[arrayDim]);
+    MPI_Recv(positions, arrayDim, MPI_INT, 0, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    for (int i = 0; i < arrayDim; i += 2) {
+        objectPositions.push_back(Position{ positions[i], positions[i + 1] });
+    }
+
+    return objectPositions;
 }
 
 void Character::displayMap() {

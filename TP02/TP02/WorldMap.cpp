@@ -68,28 +68,16 @@ void WorldMap::fillMapStructure(string mapString) {
     }
 }
 
-vector<Position> WorldMap::getRatsPosition() {
-    vector<Position> rats;
-    
-    for (size_t y = 0; y < mapData.size(); y++) {
-        for (size_t x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == RAT) {
-                rats.push_back(Position { static_cast<int>(x), static_cast<int>(y) });
-            }
-    }
-    return rats;
-}
-
-vector<Position> WorldMap::getRatHuntersPosition() {
-    vector<Position> ratHunters;
+vector<Position> WorldMap::getMapObjectPositions(MapObject object) {
+    vector<Position> objectPositions;
 
     for (size_t y = 0; y < mapData.size(); y++) {
         for (size_t x = 0; x < mapData[y].size(); x++)
-            if (mapData[y][x] == HUNTER) {
-				ratHunters.push_back(Position{ static_cast<int>(x), static_cast<int>(y) });
+            if (mapData[y][x] == object) {
+                objectPositions.push_back(Position{ static_cast<int>(x), static_cast<int>(y) });
             }
     }
-    return ratHunters;
+    return objectPositions;
 }
 
 void WorldMap::displayMap() {
@@ -135,8 +123,8 @@ void WorldMap::endGame(bool done) {
 }
 
 void WorldMap::initCharacters() {
-    vector<Position> ratsPosition = getRatsPosition();
-    vector<Position> ratHuntersPosition = getRatHuntersPosition();
+    vector<Position> ratsPosition = getMapObjectPositions(RAT);
+    vector<Position> ratHuntersPosition = getMapObjectPositions(HUNTER);
 
     int id = 1;
     for (auto position : ratsPosition) {
@@ -148,8 +136,6 @@ void WorldMap::initCharacters() {
 			int ratInfo[2] = { pos.x, pos.y };
 			MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
-            cout << "test" << endl;
-
             sendInitialMapToCharacter(id);
 
 			//Wait untile the game is started
@@ -160,6 +146,9 @@ void WorldMap::initCharacters() {
 			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
+                //Get next move
+                sendMapObjectPositions(id);
+
 				//Ask for the rat movement
 				unsigned int movement[2];
 				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
@@ -198,13 +187,18 @@ void WorldMap::initCharacters() {
             int start = 1;
             MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
-            while (!gameDone) {
-                //Ask for the rat movement
+            while (!gameDone && isAlive) {
+                //Get next move
+                sendMapObjectPositions(id);
+
+                //Ask for the ratHunter movement
                 unsigned int movement[2];
                 MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
                 Position goal(movement[0], movement[1]);
 
                 bool success = moveCharacter(pos, goal, isAlive);
+
+                displayMap();
 
                 if (success) pos = goal;
 
@@ -218,11 +212,6 @@ void WorldMap::initCharacters() {
             }
         });
         id++;
-
-        /*int ratHunterInfo[3] = { HUNTER, position.x, position.y };
-
-        MPI_Send(ratHunterInfo, 1, MPI_INT, id, 0, MPI_COMM_WORLD);
-        id++;*/
     }
 
 	gameReady = true;
@@ -333,7 +322,7 @@ void WorldMap::sendInitialMapToCharacter(int id) {
     int i = 0;
     for (size_t y = 0; y < mapData.size(); y++) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
-            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER)
+            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER && mapData[y][x]==CHEESE)
                 map[i] = static_cast<int>(mapData[y][x]);
             else
                 map[i] = static_cast<int>(EMPTY);
@@ -341,4 +330,25 @@ void WorldMap::sendInitialMapToCharacter(int id) {
         }
     }
     MPI_Send(map, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+}
+
+void WorldMap::sendMapObjectPositions(int id) {
+    int object;
+    MPI_Recv(&object, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+    
+    vector<Position> objectPositions = getMapObjectPositions(static_cast<MapObject>(object));
+
+    int arrayDim = objectPositions.size() * 2;
+    int* positions = new (int[arrayDim]);
+
+    MPI_Send(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD);
+
+    int i = 0;
+    for (auto position : objectPositions) {
+        positions[i] = position.x;
+        positions[i+1] = position.y;
+        i += 2;
+    }
+
+    MPI_Send(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
 }

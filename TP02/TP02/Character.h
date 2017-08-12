@@ -35,11 +35,10 @@ public:
 		return position.y;
 	}
 
-	Position findBestMovement(vector<Position>);
+	Position findNextMovement(vector<Position>);
 	bool canWalkOn(Position);
 	vector<Position> getPossibleMovement();
-    void popLastPosition();
-
+    vector<Position> getMapObjectPositions(MapObject object, int id);
 };
 
 #endif //CHARACTER_H

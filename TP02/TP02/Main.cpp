@@ -14,11 +14,6 @@
 //Ex : "mpiexec -n 6 TP02.exe 3 2 Map1.txt"
 
 int main(int argc, char* argv[]) {
-
-    /*WorldMap wp{ "Maps/Map1.txt" };
-    
-    wp.sendInitialMapToCharacter(1);
-    wp.displayMap();*/
     
     MPIHandler e{ argc, argv };
 
@@ -43,7 +38,6 @@ int main(int argc, char* argv[]) {
         Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
         
         rat.setInitialMap(e.getRank());
-        rat.findBestPath(CHEESE);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
@@ -52,8 +46,7 @@ int main(int argc, char* argv[]) {
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
-            cout << rat.getBestPath().back().x << "," << rat.getBestPath().back().y << endl;
-            Position wanted = rat.getBestPath().back(); //Normally would find the best path
+            Position wanted = rat.findNextMovement(rat.getMapObjectPositions(CHEESE, e.getRank())); //Normally would find the best path
 
 			unsigned int movement[2] = {wanted.x, wanted.y};
 			MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
@@ -63,7 +56,6 @@ int main(int argc, char* argv[]) {
 
 			if (result[0]) {	//Move success
 				rat.setPosition(wanted);
-                rat.popLastPosition();
 				cout << "Process " << e.getRank() << ", new position (" << rat.getPosition().x << ", " << rat.getPosition().y << ")" << endl;		
 			}
 			if (result[1]) {	//Game is over
@@ -86,7 +78,6 @@ int main(int argc, char* argv[]) {
         RatHunter hunter{ Position((unsigned int)infos[0], (unsigned int)infos[1]) };
 
         hunter.setInitialMap(e.getRank());
-        hunter.findBestPath(RAT);
 
         cout << "Process " << e.getRank() << ", IM a RATHUNTER and my position is (" << hunter.getX() << ", " << hunter.getY() << ")" << endl;
 
@@ -95,8 +86,7 @@ int main(int argc, char* argv[]) {
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
         while (!gameOver && isAlive) {
-            cout << hunter.getBestPath().back().x << "," << hunter.getBestPath().back().y << endl;
-            Position wanted = hunter.getBestPath().back(); //Normally would find the best path
+            Position wanted = hunter.findNextMovement(hunter.getMapObjectPositions(RAT, e.getRank())); //Normally would find the best path
 
             unsigned int movement[2] = { wanted.x, wanted.y };
             MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
@@ -106,7 +96,6 @@ int main(int argc, char* argv[]) {
 
             if (result[0]) {	//Move success
                 hunter.setPosition(wanted);
-                hunter.popLastPosition();
                 cout << "Process " << e.getRank() << ", new position (" << hunter.getPosition().x << ", " << hunter.getPosition().y << ")" << endl;
             }
             if (result[1]) {	//Game is over
@@ -118,16 +107,6 @@ int main(int argc, char* argv[]) {
                 cout << "Process " << e.getRank() << ", IS DEAD" << endl;
             }
         }
-        
-        
-        /*RatHunter* ratHunterCharacter;
-        int res[3];
-        MPI_Recv(&res, _countof(res), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        if (res[0] == MapObject::HUNTER) {
-            ratHunterCharacter = &RatHunter{ Position{ res[1], res[2] } };
-        }
-		Position pos = ratHunterCharacter->getPosition();
-		cout << "Process " << e.getRank() << ", I am a Cat and my position is (" << pos.x << ", " << pos.y << ")" << endl;*/
     }
 
     return 0;

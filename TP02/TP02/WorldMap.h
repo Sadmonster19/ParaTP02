@@ -34,10 +34,10 @@ private:
 
 public:
     void initCharacters();
-
-    vector<Position> getRatsPosition();
-    vector<Position> getRatHuntersPosition();
+    
+    vector<Position> getMapObjectPositions(MapObject object);
     void displayMap();
+    void sendMapObjectPositions(int id);
     void sendInitialMapToCharacter(int id);
     bool isGameDone();
     void endGame(bool done);
