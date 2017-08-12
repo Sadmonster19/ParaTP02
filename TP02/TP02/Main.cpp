@@ -39,28 +39,27 @@ int main(int argc, char* argv[]) {
 
 		//Get info to initialise rat
 		int infos[2];
-        MPI_Recv(&infos, _countof(infos), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
         
-        rat.setInitialMap();
-        rat.displayMap();
+        rat.setInitialMap(e.getRank());
         rat.findBestPath(CHEESE);
 
 		cout << "Process " << e.getRank() << ", IM PICKEL RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
 
 		//Wait until you receive that the game has started
 		int res;
-        MPI_Recv(&res, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
             cout << rat.getBestPath().back().x << "," << rat.getBestPath().back().y << endl;
             Position wanted = rat.getBestPath().back(); //Normally would find the best path
 
 			unsigned int movement[2] = {wanted.x, wanted.y};
-			MPI_Send(&movement, _countof(movement), MPI_INT, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
 
 			int result[3];	//Succes, gameDone, isAlive
-			MPI_Recv(&result, _countof(result), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);   
+			MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);   
 
 			if (result[0]) {	//Move success
 				rat.setPosition(wanted);
@@ -78,14 +77,57 @@ int main(int argc, char* argv[]) {
 		}
     }
     else if(e.getRank() > e.getRatCount()){
-        RatHunter* ratHunterCharacter;
+        bool gameOver = false;
+        bool isAlive = true;
+
+        //Get info to initialise rat
+        int infos[2];
+        MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+        RatHunter hunter{ Position((unsigned int)infos[0], (unsigned int)infos[1]) };
+
+        hunter.setInitialMap(e.getRank());
+        hunter.findBestPath(RAT);
+
+        cout << "Process " << e.getRank() << ", IM a RATHUNTER and my position is (" << hunter.getX() << ", " << hunter.getY() << ")" << endl;
+
+        //Wait until you receive that the game has started
+        int res;
+        MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+
+        while (!gameOver && isAlive) {
+            cout << hunter.getBestPath().back().x << "," << hunter.getBestPath().back().y << endl;
+            Position wanted = hunter.getBestPath().back(); //Normally would find the best path
+
+            unsigned int movement[2] = { wanted.x, wanted.y };
+            MPI_Send(&movement, _countof(movement), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD);
+
+            int result[3];	//Succes, gameDone, isAlive
+            MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+
+            if (result[0]) {	//Move success
+                hunter.setPosition(wanted);
+                hunter.popLastPosition();
+                cout << "Process " << e.getRank() << ", new position (" << hunter.getPosition().x << ", " << hunter.getPosition().y << ")" << endl;
+            }
+            if (result[1]) {	//Game is over
+                gameOver = true;
+                cout << "Process " << e.getRank() << ", GAMEOVER" << endl;
+            }
+            if (!result[2]) {	//Rat is dead!
+                isAlive = false;
+                cout << "Process " << e.getRank() << ", IS DEAD" << endl;
+            }
+        }
+        
+        
+        /*RatHunter* ratHunterCharacter;
         int res[3];
         MPI_Recv(&res, _countof(res), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         if (res[0] == MapObject::HUNTER) {
             ratHunterCharacter = &RatHunter{ Position{ res[1], res[2] } };
         }
 		Position pos = ratHunterCharacter->getPosition();
-		cout << "Process " << e.getRank() << ", I am a Cat and my position is (" << pos.x << ", " << pos.y << ")" << endl;
+		cout << "Process " << e.getRank() << ", I am a Cat and my position is (" << pos.x << ", " << pos.y << ")" << endl;*/
     }
 
     return 0;

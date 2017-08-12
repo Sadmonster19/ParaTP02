@@ -41,12 +41,12 @@ void Character::findBestPath(MapObject mo) {
 	bestPath = AStar::findBestPath(this, mo);
 }
 
-void Character::setInitialMap() {
+void Character::setInitialMap(int id) {
     int height;
     int width;
 
     int mapInfo[2];
-    MPI_Recv(&mapInfo, _countof(mapInfo), MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(&mapInfo, _countof(mapInfo), MPI_INT, 0, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     height = mapInfo[0];
     width = mapInfo[1];
@@ -55,7 +55,8 @@ void Character::setInitialMap() {
 
     int* map = new (int[arrayDim]);
 
-    MPI_Recv(map, arrayDim, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    cout << id << " : " << arrayDim << endl;
+    MPI_Recv(map, arrayDim, MPI_INT, 0, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     int i = 0;
     for (int y = 0; y < height; ++y) {

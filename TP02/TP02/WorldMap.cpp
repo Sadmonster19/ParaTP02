@@ -143,25 +143,26 @@ void WorldMap::initCharacters() {
 		th.emplace_back([&, id, position]() {
 			Position pos = position;
 			bool isAlive = true;
+
 			//Send information to initiate the rat
 			int ratInfo[2] = { pos.x, pos.y };
-			cout << "YAY: " << ratInfo[2] << " - " << (MapStructure*)ratInfo[2] << endl;
-			MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, 0, MPI_COMM_WORLD);
+			MPI_Send(ratInfo, _countof(ratInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+
+            cout << "test" << endl;
 
             sendInitialMapToCharacter(id);
-            displayMap();
 
 			//Wait untile the game is started
 			while (!gameReady);
 
 			//Tell rat the game has started
 			int start = 1;
-			MPI_Send(&start, 1, MPI_INT, id, 0, MPI_COMM_WORLD);
+			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
 				//Ask for the rat movement
 				unsigned int movement[2];
-				MPI_Recv(&movement, _countof(movement), MPI_INT, id, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
 
 				bool success = moveCharacter(pos, goal, isAlive);
@@ -170,35 +171,37 @@ void WorldMap::initCharacters() {
 
 				//Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
-				MPI_Send(response, _countof(response), MPI_INT, id, 0, MPI_COMM_WORLD);
+				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
 			}
 			if (gameDone) {
 				int response[3] = { false, gameDone, isAlive };
-				MPI_Send(response, _countof(response), MPI_INT, id, 0, MPI_COMM_WORLD);
+				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
 			}
 		});
         id++;
     }
     for (auto position : ratHuntersPosition) {
-        /*th.emplace_back([&, id, position]() {
+        th.emplace_back([&, id, position]() {
             Position pos = position;
             bool isAlive = true;
-            //Send information to initiate the rat
+
+            //Send information to initiate the ratHunter
             int ratHunterInfo[2] = { pos.x, pos.y };
-            cout << "YAY: " << ratHunterInfo[2] << " - " << (MapStructure*)ratHunterInfo[2] << endl;
-            MPI_Send(ratHunterInfo, _countof(ratHunterInfo), MPI_2INT, id, 0, MPI_COMM_WORLD);
+            MPI_Send(ratHunterInfo, _countof(ratHunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
+
+            sendInitialMapToCharacter(id);
 
             //Wait untile the game is started
             while (!gameReady);
 
             //Tell ratHunter the game has started
             int start = 1;
-            MPI_Send(&start, 1, MPI_2INT, id, 0, MPI_COMM_WORLD);
+            MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
-            while (!gameDone && isAlive) {
+            while (!gameDone) {
                 //Ask for the rat movement
                 unsigned int movement[2];
-                MPI_Recv(&movement, _countof(movement), MPI_2INT, id, 0, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+                MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
                 Position goal(movement[0], movement[1]);
 
                 bool success = moveCharacter(pos, goal, isAlive);
@@ -207,19 +210,19 @@ void WorldMap::initCharacters() {
 
                 //Return to the rat the result of the move request
                 int response[3] = { success, gameDone, isAlive };
-                MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
+                MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
             }
             if (gameDone) {
                 int response[3] = { false, gameDone, isAlive };
-                MPI_Send(response, _countof(response), MPI_2INT, id, 0, MPI_COMM_WORLD);
+                MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
             }
         });
-        id++;*/
+        id++;
 
-        int ratHunterInfo[3] = { HUNTER, position.x, position.y };
+        /*int ratHunterInfo[3] = { HUNTER, position.x, position.y };
 
         MPI_Send(ratHunterInfo, 1, MPI_INT, id, 0, MPI_COMM_WORLD);
-        id++;
+        id++;*/
     }
 
 	gameReady = true;
@@ -322,7 +325,7 @@ void WorldMap::sendInitialMapToCharacter(int id) {
     int width = mapData[0].size();
 
     int mapInfo[2]{height, width};
-    MPI_Send(mapInfo, _countof(mapInfo), MPI_INT, id, 0, MPI_COMM_WORLD);
+    MPI_Send(mapInfo, _countof(mapInfo), MPI_INT, id, id, MPI_COMM_WORLD);
 
     int arrayDim = height*width;
 
@@ -337,5 +340,5 @@ void WorldMap::sendInitialMapToCharacter(int id) {
             i++;
         }
     }
-    MPI_Send(map, arrayDim, MPI_INT, id, 0, MPI_COMM_WORLD);
+    MPI_Send(map, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
 }

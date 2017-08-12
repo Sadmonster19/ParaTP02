@@ -17,3 +17,12 @@
 /TP02/TP02.opensdf
 *.obj
 *.l.tlog
+/TP02/.vs/TP02/v14/.suo
+/TP02/TP02.sdf.BASE
+/TP02/TP02.sdf.LOCAL
+/TP02/TP02.sdf.REMOTE
+/TP02/TP02/Debug/TP02.Build.CppClean.log
+/TP02/TP02/Debug/worldmap.obj.enc
+/TP02/TP02/Debug/TP02.tlog/rc.command.1.tlog
+/TP02/TP02/Debug/TP02.tlog/rc.read.1.tlog
+/TP02/TP02/Debug/TP02.tlog/rc.write.1.tlog

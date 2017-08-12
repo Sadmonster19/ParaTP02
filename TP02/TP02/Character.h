@@ -25,7 +25,7 @@ protected:
 
 public:
     void displayMap();
-    void setInitialMap();
+    void setInitialMap(int id);
     MapStructure getInitialMap();
 	Position getPosition();
 	void setPosition(Position);
