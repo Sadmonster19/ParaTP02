@@ -21,5 +21,5 @@ bool RatHunter::move(Position pos)
 }
 
 vector<Position> RatHunter::findAllRatsInZone(vector<Position> rats) {
-	return AStar::findAllElementInZone(*this, rats);
+	return AStar::findAllRatsInZone(*this, rats);
 }

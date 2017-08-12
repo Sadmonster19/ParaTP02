@@ -20,25 +20,16 @@ vector<Position> Character::getPossibleMovement() {
 	return possibleMovement;
 }
 
-vector<Position> Character::getBestPath() {
-	return bestPath;
-}
-
-void Character::popLastPosition() {
-    if (!bestPath.empty())
-        bestPath.pop_back();
-}
-
 MapStructure Character::getInitialMap() {
 	return initialMap;
 }
 
-MapObject Character::getMapObjectForPosition(Position p) {
-	return initialMap[p.y][p.x];
+bool Character::canWalkOn(Position p) {
+	return initialMap[p.y][p.x] != MapObject::WALL;
 }
 
-void Character::findBestPath(vector<Position> goals) {
-	bestPath = AStar::findBestPath(this, goals);
+Position Character::findBestMovement(vector<Position> goals) {
+	return AStar::findBestNextMovement(this, goals);
 }
 
 void Character::setInitialMap(int id) {

@@ -10,20 +10,16 @@
 class AStar
 {
 public:
-	static vector<Position> findBestPath(Character*, vector<Position>);
-	static vector<Position> findAllElementInZone(RatHunter, vector<Position>);
+	static Position findBestNextMovement(Character*, vector<Position>);
+	static vector<Position> findAllRatsInZone(RatHunter, vector<Position>);
 
 private:
-	static vector<Position> buildPath(std::shared_ptr<Node>);
 	static bool isGoal(Position, vector<Position>);
-    static bool isObstacle(MapObject);
-
-	static vector<Position> getAllPositionForMapObject(MapStructure, MapObject);
-	static int findClosestDistanceToGoal(Position, vector<Position>);
-
-	static bool doesSetContains(SetNodePtr&, std::shared_ptr<Node>);
-
+	static Position findNextMovement(std::shared_ptr<Node>);
 	static void removeBiggestScoreForNode(SetNodePtr&, std::shared_ptr<Node>);
+
+	static int findClosestDistanceToGoal(Position, vector<Position>);
+	static bool doesSetContains(SetNodePtr&, std::shared_ptr<Node>);
 };
 
 #endif //ASTAR_H

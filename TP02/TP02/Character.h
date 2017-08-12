@@ -17,7 +17,6 @@ public:
 protected:
 	Position position;
 	vector<Position> possibleMovement;
-	vector<Position> bestPath;
     MapStructure initialMap;
 
 	virtual void initPossibleMovement() = 0;
@@ -36,10 +35,9 @@ public:
 		return position.y;
 	}
 
-	void findBestPath(vector<Position>);
-	MapObject getMapObjectForPosition(Position);
+	Position findBestMovement(vector<Position>);
+	bool canWalkOn(Position);
 	vector<Position> getPossibleMovement();
-	vector<Position> getBestPath();
     void popLastPosition();
 
 };
