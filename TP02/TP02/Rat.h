@@ -11,14 +11,13 @@ public:
     Rat() = default;
     Rat(Position);
     ~Rat() = default;
-
-private:
 	int panicLevel = 0;
 
 public:
 	void initPossibleMovement() override;
 	Position move(int id);
     bool isNearRatHunter(vector<Position>);
+    vector<Position> getRatsInPanic(int id);
 };
 
 #endif //RAT_H

@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
         WorldMap city{ argv[3] };
 
 		city.displayMap();
-        city.initCharacters();
+        city.playMap();
 
 		city.gameReady = true;
 		_sleep(10);
@@ -46,8 +46,6 @@ int main(int argc, char* argv[]) {
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
 		while (!gameOver && isAlive) {
-
-
             Position wanted = rat.move(e.getRank());
 
 			int result[3];	//Succes, gameDone, isAlive
@@ -55,6 +53,8 @@ int main(int argc, char* argv[]) {
 
 			if (result[0]) {	//Move success
 				rat.setPosition(wanted);
+                if (rat.panicLevel > 0)
+                    rat.panicLevel--;
 				cout << "Process " << e.getRank() << ", new position (" << rat.getPosition().x << ", " << rat.getPosition().y << ")" << endl;		
 			}
 			if (result[1]) {	//Game is over
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
         bool gameOver = false;
         bool isAlive = true;
 
-        //Get info to initialise rat
+        //Get info to initialise ratHunter
         int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
         RatHunter hunter{ Position((unsigned int)infos[0], (unsigned int)infos[1]) };
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         while (!gameOver && isAlive) {
             Position wanted = hunter.move(e.getRank());
 
-            int result[2];	//Succes, gameDone, isAlive
+            int result[2];	//Succes, gameDone
             MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
             if (result[0]) {	//Move success

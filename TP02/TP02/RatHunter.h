@@ -19,7 +19,7 @@ public:
 public:
 	void initPossibleMovement() override;
     Position move(int id);
-    void RatHunter::sendSreams(vector<Position>& ratsPositions, int id);
+    void RatHunter::sendSreams(vector<Position> ratsPositions, int id);
 
 	vector<Position> findAllRatsInZone(vector<Position>);
 };

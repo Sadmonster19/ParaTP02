@@ -17,7 +17,7 @@ Position AStar::findBestNextMovement(Character* c, vector<Position> goals) {
 		for (Position p : c->getPossibleMovement()) {
 			Position nextP = current->p + p;
 
-			if (c->canWalkOn(current->p)) {
+			if (c->canWalkOn(nextP)) {
 				int nextScore = findClosestDistanceToGoal(nextP, goals) + current->movementCost + 1;
 
 				std::shared_ptr<Node> nextN = std::make_shared<Node>(nextScore, nextP, current->movementCost + 1, current);

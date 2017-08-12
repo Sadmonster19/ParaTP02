@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <map>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ public:
     ~WorldMap() = default;
     MapStructure mapData;
 	vector<thread> th;
+    map<int, vector<Position>> ratToAlert;
 	bool gameDone = false;
 	bool gameReady = false;
 
@@ -33,7 +35,7 @@ private:
 	void findDoors();
 
 public:
-    void initCharacters();
+    void playMap();
     
     vector<Position> getMapObjectPositions(MapObject object);
     void displayMap();
