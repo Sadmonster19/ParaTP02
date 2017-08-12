@@ -149,7 +149,7 @@ void WorldMap::playMap() {
 
 			while (!gameDone && isAlive) {
                 sendRatsInPanic(id);
-                
+
                 //Get next move
                 sendMapObjectPositions(id);
 
@@ -157,7 +157,6 @@ void WorldMap::playMap() {
 				unsigned int movement[2];
 				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
-
 				bool success = moveCharacter(pos, goal, isAlive);
 				
                 if (success) {
@@ -174,6 +173,7 @@ void WorldMap::playMap() {
 				int response[3] = { success, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
 			}
+			cout << "RAT DEAD" << endl;
 		});
         id++;
     }

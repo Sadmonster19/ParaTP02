@@ -15,11 +15,11 @@ public:
 
 private:
 	static bool isGoal(Position, vector<Position>);
-	static Position findNextMovement(std::shared_ptr<Node>);
-	static void removeBiggestScoreForNode(SetNodePtr&, std::shared_ptr<Node>);
+	static Position findNextMovement(NodePtr);
+	static void removeBiggestScoreForNode(DequeNodePtr&, NodePtr);
 
 	static int findClosestDistanceToGoal(Position, vector<Position>);
-	static bool doesSetContains(SetNodePtr&, std::shared_ptr<Node>);
+	static bool doesDequeContains(DequeNodePtr&, NodePtr);
 };
 
 #endif //ASTAR_H

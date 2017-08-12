@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <deque>
 #include <memory>
 #include <set>
 #include <vector>
@@ -122,31 +123,31 @@ struct Node {
 	}
 };
 
-//Needed a Compare structure to have an ordered set based on something and eliminate duplicates
+typedef std::shared_ptr<Node> NodePtr;
+typedef deque<NodePtr> DequeNodePtr;
+typedef deque<Node> DequeNode;
+
 struct Compare {
-	bool operator()(std::shared_ptr<Node> a, std::shared_ptr<Node> b) const {
-		return a->score < b->score;
+	inline bool operator() (NodePtr l, NodePtr r)
+	{
+		return (l->score < r->score);
 	}
 
-	bool operator()(Node a, Node b) const {
-		return a.p < b.p;
+	inline bool operator() (Node l, Node r)
+	{
+		return (l.movementCost < r.movementCost);
 	}
 };
 
-typedef set<std::shared_ptr<Node>, Compare> SetNodePtr;
-typedef set<Node, Compare> SetNode;
-
- class Tools {
- public:
-	static vector<Position> convertSetToVector(SetNode sn) {
+struct Tools {
+	static vector<Position> convertDequeToVector(DequeNode dn) {
 		vector<Position> result;
-
-		for (Node n : sn) {
-			result.emplace_back(n.p);
-		}
+		for (auto d : dn)
+			result.emplace_back(d.p);
 
 		return result;
 	}
 };
+
 
 #endif //TOOLS_H
