@@ -37,8 +37,8 @@ MapObject Character::getMapObjectForPosition(Position p) {
 	return initialMap[p.y][p.x];
 }
 
-void Character::findBestPath(MapObject mo) {
-	bestPath = AStar::findBestPath(this, mo);
+void Character::findBestPath(vector<Position> goals) {
+	bestPath = AStar::findBestPath(this, goals);
 }
 
 void Character::setInitialMap(int id) {

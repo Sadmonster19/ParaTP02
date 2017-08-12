@@ -10,14 +10,13 @@
 class AStar
 {
 public:
-	static vector<Position> findBestPath(Character*, MapObject);
+	static vector<Position> findBestPath(Character*, vector<Position>);
 	static vector<Position> findAllElementInZone(RatHunter, vector<Position>);
 
 private:
 	static vector<Position> buildPath(std::shared_ptr<Node>);
-	static bool isGoal(MapObject, MapObject);
+	static bool isGoal(Position, vector<Position>);
     static bool isObstacle(MapObject);
-	static bool isRat(vector<Position> rats, Position p);
 
 	static vector<Position> getAllPositionForMapObject(MapStructure, MapObject);
 	static int findClosestDistanceToGoal(Position, vector<Position>);

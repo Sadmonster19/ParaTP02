@@ -1,18 +1,16 @@
 #include "AStar.h"
 
-vector<Position> AStar::findBestPath(Character* c, MapObject goal) {
+vector<Position> AStar::findBestPath(Character* c, vector<Position> goals) {
 	SetNodePtr open;
 	SetNodePtr close;
 	open.insert(std::make_shared<Node>(0, c->getPosition(), 0, nullptr));
-
-	vector<Position> goals = getAllPositionForMapObject(c->getInitialMap(), goal);
 
 	while (!open.empty()) {
 		std::shared_ptr<Node> current = *open.begin();
 		open.erase(current);
 		close.insert(current);
 
-		if (isGoal(c->getMapObjectForPosition(current->p), goal)) {
+		if (isGoal(current->p, goals)) {
 			return buildPath(current);
 		}
 
@@ -48,7 +46,7 @@ vector<Position> AStar::findAllElementInZone(RatHunter rh, vector<Position> rats
 			for (Position p : rh.getPossibleMovement()) {
 				Position nextP = n.p + p;
 
-				if (isRat(rats, nextP))
+				if (isGoal(nextP, rats))
 					inSight.insert(nextP);
 
 				if (!isObstacle(rh.getMapObjectForPosition(nextP))) 
@@ -72,20 +70,12 @@ vector<Position> AStar::buildPath(std::shared_ptr<Node> n) {
 	return path;
 }
 
-bool AStar::isGoal(MapObject current, MapObject goal) {
-	return current == goal;
+bool AStar::isGoal(Position current, vector<Position> goals) {
+	return std::find(goals.begin(), goals.end(), current) != goals.end();
 }
 
 bool AStar::isObstacle(MapObject current) {
     return current == WALL;
-}
-
-bool AStar::isRat(vector<Position> rats, Position p) {
-	for (Position r : rats)
-		if (r == p)
-			return true;
-
-	return false;
 }
 
 vector<Position> AStar::getAllPositionForMapObject(MapStructure ms, MapObject mo) {

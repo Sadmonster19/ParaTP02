@@ -36,7 +36,7 @@ public:
 		return position.y;
 	}
 
-	void findBestPath(MapObject);
+	void findBestPath(vector<Position>);
 	MapObject getMapObjectForPosition(Position);
 	vector<Position> getPossibleMovement();
 	vector<Position> getBestPath();
