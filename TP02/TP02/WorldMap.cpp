@@ -146,6 +146,8 @@ void WorldMap::initCharacters() {
 			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
+                sendRatsInPanic(id);
+                
                 //Get next move
                 sendMapObjectPositions(id);
 
@@ -188,8 +190,12 @@ void WorldMap::initCharacters() {
             MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
             while (!gameDone) {
+                
+                
                 //Get next move
                 sendMapObjectPositions(id);
+
+                getHunterScream(id);
 
                 //Ask for the ratHunter movement
                 unsigned int movement[2];
@@ -349,4 +355,30 @@ void WorldMap::sendMapObjectPositions(int id) {
     }
 
     MPI_Send(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD);
+}
+
+vector<Position> WorldMap::getHunterScream(int id) {
+    vector<Position> ratsScreamedAt;
+    bool scream;
+
+    MPI_Recv(&scream, 1, MPI_BYTE, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
+
+    if (scream) {
+
+        int arrayDim;
+        MPI_Recv(&arrayDim, 1, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        
+        int* positions = new (int[arrayDim]);
+        MPI_Recv(positions, arrayDim, MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        for (int i = 0; i < arrayDim; i += 2) {
+            ratsScreamedAt.push_back(Position{ positions[i], positions[i + 1] });
+        }
+    }
+
+    return ratsScreamedAt;
+}
+
+void WorldMap::sendRatsInPanic(int id) {
+
 }

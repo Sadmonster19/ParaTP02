@@ -16,7 +16,11 @@ void RatHunter::initPossibleMovement() {
 
 Position RatHunter::move(int id)
 {
-    Position wanted = findNextMovement(getMapObjectPositions(RAT, id)); //Normally would find the best path
+    vector<Position> ratsPositions = getMapObjectPositions(RAT, id);
+
+    sendSreams(ratsPositions, id);
+
+    Position wanted = findNextMovement(ratsPositions); //Normally would find the best path
 
     unsigned int movement[2] = { wanted.x, wanted.y };
     MPI_Send(&movement, _countof(movement), MPI_INT, 0, id, MPI_COMM_WORLD);
@@ -26,4 +30,14 @@ Position RatHunter::move(int id)
 
 vector<Position> RatHunter::findAllRatsInZone(vector<Position> rats) {
 	return AStar::findAllRatsInZone(*this, rats);
+}
+
+void RatHunter::sendSreams(vector<Position>& ratsPositions, int id) {
+    bool scream = false;
+    vector<Position> ratsInZone = findAllRatsInZone(ratsPositions);
+
+    if (ratsInZone.empty()) {
+
+    }
+
 }

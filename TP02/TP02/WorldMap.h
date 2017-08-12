@@ -38,6 +38,8 @@ public:
     vector<Position> getMapObjectPositions(MapObject object);
     void displayMap();
     void sendMapObjectPositions(int id);
+    void sendRatsInPanic(int id);
+    vector<Position> getHunterScream(int id);
     void sendInitialMapToCharacter(int id);
     bool isGameDone();
     void endGame(bool done);
