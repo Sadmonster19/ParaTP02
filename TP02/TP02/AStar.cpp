@@ -1,74 +1,62 @@
 #include "AStar.h"
 
-#include <deque>
-
 Position AStar::findBestNextMovement(Character* c, vector<Position> goals) {
-	DequeNodePtr open;
-	DequeNodePtr close;
-
-	open.emplace_back(std::make_shared<Node>(0, c->getPosition(), 0, nullptr));
+	SetNodePtr open;
+	SetNodePtr close;
+	open.insert(std::make_shared<Node>(0, c->getPosition(), 0, nullptr));
 
 	while (!open.empty()) {
-		NodePtr current = open.front();
-		open.pop_front();
-		close.push_back(current);
+		std::shared_ptr<Node> current = *open.begin();
+		open.erase(current);
+		close.insert(current);
 
 		if (isGoal(current->p, goals)) {
 			return findNextMovement(current);
 		}
-		cout << "Test" << endl;
-		cout << "S: " << current->score << "  P " << current->p.x << " " << current->p.y << endl;
+
 		for (Position p : c->getPossibleMovement()) {
 			Position nextP = current->p + p;
 
 			if (c->canWalkOn(nextP)) {
-				int i = (p.x == 0 && p.y == 0) ? 1 : 0;
-				int nextScore = findClosestDistanceToGoal(nextP, goals) +current->movementCost + i;
+				int nextScore = findClosestDistanceToGoal(nextP, goals) + current->movementCost + 1;
 
-				NodePtr nextN = std::make_shared<Node>(nextScore, nextP, current->movementCost + 1, current);
-
-				cout << "S: " << nextScore << "  P " << nextP.x << " " << nextP.y << endl;
+				std::shared_ptr<Node> nextN = std::make_shared<Node>(nextScore, nextP, current->movementCost + 1, current);
 
 				removeBiggestScoreForNode(open, nextN);
 				removeBiggestScoreForNode(close, nextN);
 
-				if (!doesDequeContains(open, nextN) && !doesDequeContains(close, nextN))
-					open.push_back(nextN);
+				if (!doesSetContains(open, nextN) && !doesSetContains(close, nextN))
+					open.insert(nextN);
 			}
-			
 		}
-		std::sort(open.begin(), open.end(), Compare());
-		cout << "FinTest" << endl;
 	}
 
 	return Position{};
 }
 
 vector<Position> AStar::findAllRatsInZone(RatHunter rh, vector<Position> rats) {
-	DequeNode inSight;
-	DequeNode tests;
-	tests.push_back(Node(rh.getPosition()));
+	SetNode inSight;
+	SetNode tests;
+	tests.insert(Node(rh.getPosition()));
 
 	for (int i = 0; i < rh.MAX_SIGHT; ++i) {
-		DequeNode temp;
+		SetNode temp;
 
 		for (Node n : tests) {
 			for (Position p : rh.getPossibleMovement()) {
 				Position nextP = n.p + p;
 
 				if (isGoal(nextP, rats))
-					inSight.push_back(nextP);
+					inSight.insert(nextP);
 
 				if (!rh.canWalkOn(nextP))
-					temp.push_back(Node{ nextP });
+					temp.insert(Node{ nextP });
 			}
 		}
-
-		std::sort(temp.begin(), temp.end(), Compare());
 		tests = temp;
 	}
 
-	return Tools::convertDequeToVector(inSight);
+	return Tools::convertSetToVector(inSight);
 }
 
 Position AStar::findNextMovement(std::shared_ptr<Node> n) {
@@ -85,26 +73,25 @@ bool AStar::isGoal(Position current, vector<Position> goals) {
 }
 
 int AStar::findClosestDistanceToGoal(Position p, vector<Position> goals) {
-	vector<float> distance;
+    auto element = std::min_element(goals.begin(), goals.begin(), [&p](Position& p1, Position& p2) {
+        return p.getDistance(p1) < p.getDistance(p2);
+    });
 
-	for (auto v : goals)
-		distance.emplace_back(p.getDistance(v));
-
-	return *std::min_element(distance.begin(), distance.end());
+    return p.getDistance(*element);
 }
 
-bool AStar::doesDequeContains(DequeNodePtr& dnp, NodePtr toFind) {
-	return std::find_if(dnp.begin(), dnp.end(), [&](NodePtr const& n) {
+bool AStar::doesSetContains(SetNodePtr& ns, std::shared_ptr<Node> toFind) {
+	return std::find_if(ns.begin(), ns.end(), [&](std::shared_ptr<Node> const& n) {
 		return *n == *toFind;
-	}) != dnp.end();
+	}) != ns.end();
 }
 
-void AStar::removeBiggestScoreForNode(DequeNodePtr& dnp, NodePtr toFind) {
-	auto it = std::find_if(dnp.begin(), dnp.end(), [&](NodePtr const& n) {
-		return n->p == toFind->p;
+void AStar::removeBiggestScoreForNode(SetNodePtr& ns, std::shared_ptr<Node> toFind) {
+	auto it = std::find_if(ns.begin(), ns.end(), [&](std::shared_ptr<Node> const& n) {
+		return *n == *toFind;
 	});
 
-	if (it != dnp.end() && it->get()->score >= toFind->score) {
-		dnp.erase(it);
+	if (it != ns.end() && it->get()->score <= toFind->score) {
+		ns.erase(it);
 	}
 }

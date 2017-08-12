@@ -30,7 +30,7 @@ Position Rat::move(int id)
         wanted = findNextMovement(getMapObjectPositions(CHEESE, id));
 
     int movement[2] = { wanted.x, wanted.y };
-//    MPI_Send(&movement, _countof(movement), MPI_INT, 0, id, MPI_COMM_WORLD);
+    MPI_Send(&movement, _countof(movement), MPI_INT, 0, id, MPI_COMM_WORLD);
 
     return wanted;
 }
