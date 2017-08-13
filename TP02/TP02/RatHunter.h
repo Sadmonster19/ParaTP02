@@ -22,6 +22,8 @@ public:
     void RatHunter::sendSreams(vector<Position> ratsPositions, int id);
 
 	vector<Position> findAllRatsInZone(vector<Position>);
+
+    bool canWalkOn(Position p) override;
 };
 
 #endif // !RATHUNTER_H

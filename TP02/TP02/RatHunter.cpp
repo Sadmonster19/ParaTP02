@@ -57,3 +57,9 @@ void RatHunter::sendSreams(vector<Position> ratsPositions, int id) {
         MPI_Send(positions, arrayDim, MPI_INT, 0, id, MPI_COMM_WORLD);
     }
 }
+
+bool RatHunter::canWalkOn(Position p) {
+    if (p.x < 0 || p.x >= initialMap.at(0).size() || p.y < 0 || p.y >= initialMap.size())
+        return false;
+    return (initialMap[p.y][p.x] != WALL && initialMap[p.y][p.x] != CHEESE);
+}

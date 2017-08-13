@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
         int res;
         MPI_Recv(&res, 1, MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 
-        while (!gameOver && isAlive) {
+        while (!gameOver) {
             Position wanted = hunter.move(e.getRank());
 
             int result[2];	//Succes, gameDone

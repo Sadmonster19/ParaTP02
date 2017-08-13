@@ -172,8 +172,8 @@ void WorldMap::playMap() {
                 //Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
+                _sleep(1000);
 			}
-			cout << "RAT DEAD" << endl;
 		});
         id++;
     }
@@ -198,6 +198,7 @@ void WorldMap::playMap() {
             while (!gameDone) {
                 //Get next move
                 sendMapObjectPositions(id);
+                //sendMapObjectPositions(id);
 
                 {
                     lock_guard<mutex> lock(m);
@@ -215,15 +216,18 @@ void WorldMap::playMap() {
                     pos = goal;
                     if (!isAlive) {
                         lock_guard<mutex> lock(m);
-                        ratToKill.push_back(getRatIdFromPosition(pos));
+                        int ratId = getRatIdFromPosition(pos);
+                        if(ratId != 0)
+                            ratToKill.push_back(ratId);
                     }
                 }
 
-                gameDone = getMapObjectPositions(RAT).empty();
+                gameDone = (getMapObjectPositions(RAT).empty() || getMapObjectPositions(CHEESE).empty());
 
                 //Return to the rat the result of the move request
                 int response[2] = { success, gameDone };
                 MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
+                _sleep(1000);
             }
         });
         id++;
@@ -336,7 +340,7 @@ void WorldMap::sendInitialMapToCharacter(int id) {
     int i = 0;
     for (size_t y = 0; y < mapData.size(); y++) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
-            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER && mapData[y][x]!=CHEESE)
+            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER)
                 map[i] = static_cast<int>(mapData[y][x]);
             else
                 map[i] = static_cast<int>(EMPTY);
@@ -420,6 +424,7 @@ int WorldMap::getRatIdFromPosition(Position pos) {
 }
 
 bool WorldMap::isRatAlive(int id) {
+    lock_guard<mutex> lock(m);
     auto it = std::find(ratToKill.begin(), ratToKill.end(), id);
     if (it != ratToKill.end()) {
         ratToKill.erase(it);

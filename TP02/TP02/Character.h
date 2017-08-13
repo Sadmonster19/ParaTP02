@@ -35,7 +35,7 @@ public:
 	}
 
 	Position findNextMovement(vector<Position>);
-	bool canWalkOn(Position);
+	virtual bool canWalkOn(Position);
 	vector<Position> getPossibleMovement();
     vector<Position> getMapObjectPositions(MapObject object, int id);
 };
