@@ -32,7 +32,7 @@ private:
     void getInitialMap(string mapName);
 	MapObject getMapElement(Position);
 	void changeElement(Position, MapObject);
-	bool moveCharacter(Position, Position, bool&);
+	bool moveCharacter(int, Position, Position, bool&);
 	void swapElements(Position, Position);
 	void findDoors();
 

@@ -1,6 +1,7 @@
 #include "WorldMap.h"
 #include "Rat.h"
 #include "RatHunter.h"
+#include "Stats.h"
 #include <fstream>
 #include <regex>
 #include <sstream>
@@ -158,17 +159,19 @@ void WorldMap::playMap() {
 				unsigned int movement[2];
 				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
-				bool success = moveCharacter(pos, goal, isAlive);
-				
-                if (success) {
+
+				Stats::addTotalMouvement(id);
+				bool success = moveCharacter(id, pos, goal, isAlive);
+
+				if (success) {
+					Stats::addAcceptedMouvement(id);
                     pos = goal;
                     lock_guard<mutex> lock(m);
                     rats[id] = pos;
                 }
 
                 gameDone = getMapObjectPositions(CHEESE).empty();
-
-				
+		
                 //Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
 				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
@@ -210,9 +213,11 @@ void WorldMap::playMap() {
                 MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
                 Position goal(movement[0], movement[1]);
 
-                bool success = moveCharacter(pos, goal, isAlive);
+				Stats::addTotalMouvement(id);
+				bool success = moveCharacter(id, pos, goal, isAlive);
 
                 if (success) {
+					Stats::addAcceptedMouvement(id);
                     pos = goal;
                     if (!isAlive) {
                         lock_guard<mutex> lock(m);
@@ -250,7 +255,7 @@ void WorldMap::swapElements(Position pos1, Position pos2) {
 	changeElement(pos2, temp);
 }
 
-bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
+bool WorldMap::moveCharacter(int id, Position start, Position goal, bool& isAlive) {
     lock_guard<std::mutex> lock(m);
     MapObject character = getMapElement(start);
 
@@ -260,6 +265,7 @@ bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
         {
         case RAT:
             if (character == HUNTER) {
+				Stats::addCapturedRat(getRatIdFromPosition(goal), id);
                 changeElement(goal, EMPTY);
                 swapElements(start, goal);
                 isAlive = false;
@@ -268,6 +274,7 @@ bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
             break;
         case HUNTER:
             if (character == RAT) {
+				Stats::addCapturedRat(id, getRatIdFromPosition(goal));
                 changeElement(start, EMPTY);
                 isAlive = false;
                 success = true;
@@ -276,6 +283,7 @@ bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
         case CHEESE:
             if (character == RAT) {
                 //Eat cheese -- Replace cheese with EmptySpace
+				Stats::addEatenCheese(id, start);
                 changeElement(goal, EMPTY);
                 swapElements(start, goal);
                 success = true;
@@ -288,6 +296,7 @@ bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
         case DOOR:
             if (character == RAT) {
                 //Rat is out of the game -- Replace rat with EmptySpace
+				Stats::addFledRat(id, start);
                 changeElement(start, EMPTY);
                 isAlive = false;
                 success = true;
