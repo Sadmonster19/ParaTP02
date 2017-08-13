@@ -1,0 +1,30 @@
+Mouvement Stats
+---------------
+Le protagoniste 1 a demande 17 mouvements.
+Le protagoniste 2 a demande 23 mouvements.
+Le protagoniste 3 a demande 50 mouvements.
+Le protagoniste 4 a demande 48 mouvements.
+Le protagoniste 5 a demande 45 mouvements.
+Le protagoniste 1 a reussis 17 mouvements.
+Le protagoniste 2 a reussis 23 mouvements.
+Le protagoniste 3 a reussis 50 mouvements.
+Le protagoniste 4 a reussis 46 mouvements.
+Le protagoniste 5 a reussis 44 mouvements.
+Le protagoniste 1 a un taux de reussite de 100%.
+Le protagoniste 2 a un taux de reussite de 100%.
+Le protagoniste 3 a un taux de reussite de 100%.
+Le protagoniste 4 a un taux de reussite de 95.8333%.
+Le protagoniste 5 a un taux de reussite de 97.7778%.
+
+Rat Stats
+---------------
+Le rat 1 a ete capture par 4.
+Le rat 2 a ete capture par 0.
+Le rat 3 a mange le fromage a la position [5, 2].
+Le rat 2 a mange le fromage a la position [9, 5].
+Le rat 3 a mange le fromage a la position [9, 1].
+Le rat 3 a mange le fromage a la position [28, 4].
+
+Rat Hunter Stats
+---------------
+

@@ -119,8 +119,11 @@ bool WorldMap::isGameDone() {
     return gameDone;
 }
 
-void WorldMap::endGame(bool done) {
-    gameDone = done;
+void WorldMap::endGame() {
+	for (auto it = begin(th); it != end(th); it++) {
+		it->join();
+	}
+	Stats::printAllStats();
 }
 
 void WorldMap::playMap() {
@@ -132,6 +135,7 @@ void WorldMap::playMap() {
 		th.emplace_back([&, id, position]() {
 			Position pos = position;
 			bool isAlive = true;
+			bool gameOver = false;
 
 			//Send information to initiate the rat
 			int ratInfo[2] = { pos.x, pos.y };
@@ -148,7 +152,7 @@ void WorldMap::playMap() {
 			int start = 1;
 			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
-			while (!gameDone && isAlive) {
+			while (!gameOver && isAlive) {
                 isAlive = isRatAlive(id);
                 sendRatsInPanic(id);
 
@@ -170,13 +174,14 @@ void WorldMap::playMap() {
                     rats[id] = pos;
                 }
 
-                gameDone = getMapObjectPositions(CHEESE).empty();
+				gameOver = gameDone = (getMapObjectPositions(CHEESE).empty() || getMapObjectPositions(RAT).empty());
 		
                 //Return to the rat the result of the move request
-				int response[3] = { success, gameDone, isAlive };
+				int response[3] = { success, gameOver, isAlive };
 				MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
-                _sleep(1000);
+                _sleep(100);
 			}
+			
 		});
         id++;
     }
@@ -184,7 +189,7 @@ void WorldMap::playMap() {
         th.emplace_back([&, id, position]() {
             Position pos = position;
             bool isAlive = true;
-
+			bool gameOver = false;
             //Send information to initiate the ratHunter
             int hunterInfo[2] = { pos.x, pos.y };
             MPI_Send(hunterInfo, _countof(hunterInfo), MPI_INT, id, id, MPI_COMM_WORLD);
@@ -198,10 +203,9 @@ void WorldMap::playMap() {
             int start = 1;
             MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
-            while (!gameDone) {
+            while (!gameOver) {
                 //Get next move
                 sendMapObjectPositions(id);
-                //sendMapObjectPositions(id);
 
                 {
                     lock_guard<mutex> lock(m);
@@ -227,18 +231,17 @@ void WorldMap::playMap() {
                     }
                 }
 
-                gameDone = (getMapObjectPositions(RAT).empty() || getMapObjectPositions(CHEESE).empty());
+				gameOver = gameDone = (getMapObjectPositions(RAT).empty() || getMapObjectPositions(CHEESE).empty());
 
                 //Return to the rat the result of the move request
-                int response[2] = { success, gameDone };
+                int response[2] = { success, gameOver };
                 MPI_Send(response, _countof(response), MPI_INT, id, id, MPI_COMM_WORLD);
-                _sleep(1000);
+                _sleep(100);
             }
+			
         });
         id++;
     }
-
-	gameReady = true;
 }
 
 MapObject WorldMap::getMapElement(Position pos) {

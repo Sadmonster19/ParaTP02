@@ -15,10 +15,10 @@ private:
 
 	static map<int, int> totalMouvement;
 	static map<int, int> acceptedMouvement;
-	static map<int, int> capturedRat;
-	static map<int, Position> fledRat;
-	static map<int, Position> eatenCheese;
-	static map<int, Position> screamedFrom;
+	static vector<std::pair<int, int>> capturedRat;
+	static vector<std::pair<int, Position>> fledRat;
+	static vector<std::pair<int, Position>> eatenCheese;
+	static vector<std::pair<int, Position>> screamedFrom;
 
 	static void printMouvementInfo(ofstream&);
 	static void printRatInfo(ofstream&);

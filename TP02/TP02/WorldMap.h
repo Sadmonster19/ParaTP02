@@ -47,14 +47,7 @@ public:
     void sendInitialMapToCharacter(int id);
     bool isGameDone();
     bool isRatAlive(int id);
-    void endGame(bool done);
-	void endGame() {
-		gameDone = true;
-
-		for (auto it = begin(th); it != end(th); it++) {
-			it->join();
-		}
-	};
+	void endGame();
 };
 
 #endif //WORLDMAP_H

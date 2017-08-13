@@ -1,5 +1,6 @@
 #include "RatHunter.h"
 #include "AStar.h"
+#include "Stats.h"
 
 RatHunter::RatHunter(Position p_)
 	: Character(p_)
@@ -40,6 +41,7 @@ void RatHunter::sendSreams(vector<Position> ratsPositions, int id) {
         MPI_Send(&scream, 1, MPI_INT, 0, id, MPI_COMM_WORLD);
     }
     else {
+		Stats::addScreamedFrom(id, position);
         scream = 1;
         MPI_Send(&scream, 1, MPI_INT, 0, id, MPI_COMM_WORLD);
 
@@ -54,6 +56,7 @@ void RatHunter::sendSreams(vector<Position> ratsPositions, int id) {
             positions[i + 1] = position.y;
             i += 2;
         }
+
         MPI_Send(positions, arrayDim, MPI_INT, 0, id, MPI_COMM_WORLD);
     }
 }

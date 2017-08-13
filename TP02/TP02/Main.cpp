@@ -24,9 +24,8 @@ int main(int argc, char* argv[]) {
         city.playMap();
 
 		city.gameReady = true;
-		_sleep(10);
 		city.endGame();
-
+		_sleep(2500);
     }
     else if (e.getRank() <= e.getRatCount()){
 		bool gameOver = false;
