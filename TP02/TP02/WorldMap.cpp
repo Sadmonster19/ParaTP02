@@ -10,7 +10,7 @@
 
 
 WorldMap::WorldMap()
-    : ratsCount{}, ratHuntersCount{}
+    : ratsCount{}, ratHuntersCount{}, ofs{"Images.txt"}
 {
 }
 
@@ -112,7 +112,7 @@ void WorldMap::displayMap() {
         }
         map += '\n';
     }
-	cout << map << endl;
+	ofs << map << endl;
 }
 
 bool WorldMap::isGameDone() {
@@ -277,7 +277,7 @@ bool WorldMap::moveCharacter(int id, Position start, Position goal, bool& isAliv
             break;
         case HUNTER:
             if (character == RAT) {
-				Stats::addCapturedRat(id, getRatIdFromPosition(goal));
+				Stats::addCapturedRat(id, 0);
                 changeElement(start, EMPTY);
                 isAlive = false;
                 success = true;

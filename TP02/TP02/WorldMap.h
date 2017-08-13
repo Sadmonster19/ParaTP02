@@ -3,6 +3,7 @@
 
 #include "Tools.h"
 #include <string>
+#include <fstream>
 #include <thread>
 #include <mutex>
 #include <map>
@@ -27,6 +28,7 @@ private:
     int ratsCount;
     int ratHuntersCount;
 	mutex m;
+	ofstream ofs;
 
     void fillMapStructure(string mapString);
     void getInitialMap(string mapName);

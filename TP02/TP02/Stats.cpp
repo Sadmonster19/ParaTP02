@@ -79,7 +79,12 @@ void Stats::printRatInfo(ofstream& ofs) {
 	ofs << "---------------" << endl;
 
 	for (auto entry : capturedRat)
-		ofs << "Le rat " << entry.first << " a ete capture par " << entry.second << "." << endl;
+		if (entry.first == 0) {
+			ofs << "Le rat " << entry.first << " a ete sauvagement dechiqueter par un chat..." << endl;
+		}
+		else {
+			ofs << "Le rat " << entry.first << " a ete capture par " << entry.second << "." << endl;
+		}
 
 	for (auto entry : fledRat)
 		ofs << "Le rat " << entry.first << " s'est enfuie a la position [" << entry.second.x << ", " << entry.second.y << "]." << endl;
