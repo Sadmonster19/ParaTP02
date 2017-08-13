@@ -25,8 +25,9 @@ MapStructure Character::getInitialMap() {
 }
 
 bool Character::canWalkOn(Position p) {
-    if (p.x < 0 || p.x >= initialMap.at(0).size() || p.y < 0 || p.y >= initialMap.size())
+    if (isOutOfBounds(p))
         return false;
+
     return initialMap[p.y][p.x] != MapObject::WALL;
 }
 
@@ -112,4 +113,8 @@ void Character::displayMap() {
         map += '\n';
     }
     cout << map << endl;
+}
+
+bool Character::isOutOfBounds(Position p) {
+	return  (p.x < 0 || p.x >= initialMap.at(0).size() || p.y < 0 || p.y >= initialMap.size());
 }

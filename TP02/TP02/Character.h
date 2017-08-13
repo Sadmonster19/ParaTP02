@@ -20,6 +20,7 @@ protected:
     MapStructure initialMap;
 
 	virtual void initPossibleMovement() = 0;
+	bool isOutOfBounds(Position p);
 
 public:
     void displayMap();
