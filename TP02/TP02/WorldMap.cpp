@@ -336,7 +336,7 @@ void WorldMap::sendInitialMapToCharacter(int id) {
     int i = 0;
     for (size_t y = 0; y < mapData.size(); y++) {
         for (size_t x = 0; x < mapData[y].size(); x++) {
-            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER && mapData[y][x]==CHEESE)
+            if (mapData[y][x] != RAT && mapData[y][x] != HUNTER && mapData[y][x]!=CHEESE)
                 map[i] = static_cast<int>(mapData[y][x]);
             else
                 map[i] = static_cast<int>(EMPTY);

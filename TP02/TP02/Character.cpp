@@ -25,7 +25,9 @@ MapStructure Character::getInitialMap() {
 }
 
 bool Character::canWalkOn(Position p) {
-	return initialMap[p.y][p.x] != MapObject::WALL;
+    if (p.x < 0 || p.x >= initialMap.at(0).size() || p.y < 0 || p.y >= initialMap.size())
+        return false;
+    return initialMap[p.y][p.x] != MapObject::WALL;
 }
 
 Position Character::findNextMovement(vector<Position> goals) {
