@@ -15,7 +15,7 @@ WorldMap::WorldMap()
 }
 
 WorldMap::WorldMap(string fileName)
-    : ratsCount{}, ratHuntersCount{}
+    : ratsCount{}, ratHuntersCount{}, ofs{ "Images.txt" }
 {
     getInitialMap(fileName);
 }
