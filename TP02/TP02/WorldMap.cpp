@@ -148,6 +148,7 @@ void WorldMap::playMap() {
 			MPI_Send(&start, 1, MPI_INT, id, id, MPI_COMM_WORLD);
 
 			while (!gameDone && isAlive) {
+                isAlive = isRatAlive(id);
                 sendRatsInPanic(id);
 
                 //Get next move
@@ -167,7 +168,6 @@ void WorldMap::playMap() {
 
                 gameDone = getMapObjectPositions(CHEESE).empty();
 
-                isAlive = isRatAlive(id);
 				
                 //Return to the rat the result of the move request
 				int response[3] = { success, gameDone, isAlive };
@@ -251,54 +251,55 @@ void WorldMap::swapElements(Position pos1, Position pos2) {
 }
 
 bool WorldMap::moveCharacter(Position start, Position goal, bool& isAlive) {
-	lock_guard<std::mutex> lock(m);
-	MapObject character = getMapElement(start);
+    lock_guard<std::mutex> lock(m);
+    MapObject character = getMapElement(start);
 
-	bool success = false;
+    bool success = false;
+    if(!gameDone){
+        switch (getMapElement(goal))
+        {
+        case RAT:
+            if (character == HUNTER) {
+                changeElement(goal, EMPTY);
+                swapElements(start, goal);
+                isAlive = false;
+                success = true;
+            }
+            break;
+        case HUNTER:
+            if (character == RAT) {
+                changeElement(start, EMPTY);
+                isAlive = false;
+                success = true;
+            }
+            break;
+        case CHEESE:
+            if (character == RAT) {
+                //Eat cheese -- Replace cheese with EmptySpace
+                changeElement(goal, EMPTY);
+                swapElements(start, goal);
+                success = true;
+            }
+            break;
+        case EMPTY:
+            swapElements(start, goal);
+            success = true;
+            break;
+        case DOOR:
+            if (character == RAT) {
+                //Rat is out of the game -- Replace rat with EmptySpace
+                changeElement(start, EMPTY);
+                isAlive = false;
+                success = true;
+            }
+            break;
+        default:
+            break;
+        }
 
-	switch (getMapElement(goal))
-	{
-	case RAT:
-		if (character == HUNTER) {
-			changeElement(goal, EMPTY);
-			swapElements(start, goal);
-			isAlive = false;
-			success = true;
-		}
-		break;
-	case HUNTER:
-		if (character == RAT) {
-			changeElement(start, EMPTY);
-			isAlive = false;
-			success = true;
-		}
-		break;
-	case CHEESE:
-		if (character == RAT) {
-			//Eat cheese -- Replace cheese with EmptySpace
-			changeElement(goal, EMPTY);
-			swapElements(start, goal);
-			success = true;
-		}
-		break;
-	case EMPTY:
-		swapElements(start, goal);
-		success = true;
-		break;
-	case DOOR:
-		if (character == RAT) {
-			//Rat is out of the game -- Replace rat with EmptySpace
-			changeElement(start, EMPTY);
-			isAlive = false;
-			success = true;
-		}
-		break;
-	default:
-		break;
-	}
-
-	if(success)
-		displayMap();
+        if (success)
+            displayMap();
+    }
 
 	return success;
 }
