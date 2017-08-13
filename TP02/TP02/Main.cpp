@@ -34,11 +34,11 @@ int main(int argc, char* argv[]) {
 		//Get info to initialise rat
 		int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        Rat rat{Position((unsigned int)infos[0], (unsigned int)infos[1])};
+        Rat rat{Position(infos[0], infos[1])};
         
         rat.setInitialMap(e.getRank());
 
-		cout << "Process " << e.getRank() << ", IM PICKLE RAT and my position is (" << rat.getX() << ", " << rat.getY() << ")" << endl;
+		cout << "Process " << e.getRank() << " is a RAT at (" << rat.getPosition().x << ", " << rat.getPosition().y << ")" << endl;
 
 		//Wait until you receive that the game has started
 		int res;
@@ -73,11 +73,11 @@ int main(int argc, char* argv[]) {
         //Get info to initialise ratHunter
         int infos[2];
         MPI_Recv(&infos, _countof(infos), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-        RatHunter hunter{ Position((unsigned int)infos[0], (unsigned int)infos[1]) };
+        RatHunter hunter{ Position(infos[0], infos[1]) };
 
         hunter.setInitialMap(e.getRank());
 
-        cout << "Process " << e.getRank() << ", IM a RATHUNTER and my position is (" << hunter.getX() << ", " << hunter.getY() << ")" << endl;
+        cout << "Process " << e.getRank() << " is a RATHUNTER at (" << hunter.getPosition().x << ", " << hunter.getPosition().y << ")" << endl;
 
         //Wait until you receive that the game has started
         int res;
@@ -85,10 +85,8 @@ int main(int argc, char* argv[]) {
 
         while (!gameOver) {
             Position wanted = hunter.move(e.getRank());
-
             int result[2];	//Succes, gameDone
             MPI_Recv(&result, _countof(result), MPI_INT, 0, e.getRank(), MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
-
             if (result[0]) {	//Move success
                 hunter.setPosition(wanted);
                 cout << "Process " << e.getRank() << ", new position (" << hunter.getPosition().x << ", " << hunter.getPosition().y << ")" << endl;

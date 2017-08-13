@@ -28,12 +28,6 @@ public:
     MapStructure getInitialMap();
 	Position getPosition();
 	void setPosition(Position);
-	unsigned int getX() {
-		return position.x;
-	}
-	unsigned int getY() {
-		return position.y;
-	}
 
 	Position findNextMovement(vector<Position>);
 	virtual bool canWalkOn(Position);

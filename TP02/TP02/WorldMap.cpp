@@ -84,8 +84,8 @@ vector<Position> WorldMap::getMapObjectPositions(MapObject object) {
 void WorldMap::displayMap() {
     string map{};
 
-    for (unsigned int y = 0; y < mapData.size(); y++) {
-        for (unsigned int x = 0; x < mapData[y].size(); x++) {
+    for (size_t y = 0; y < mapData.size(); y++) {
+        for (size_t x = 0; x < mapData[y].size(); x++) {
             switch (mapData[y][x])
             {
             case WALL:
@@ -116,7 +116,7 @@ void WorldMap::displayMap() {
 }
 
 bool WorldMap::isGameDone() {
-    return gameDone;
+    return gameDone = (getMapObjectPositions(CHEESE).empty() || getMapObjectPositions(RAT).empty());
 }
 
 void WorldMap::endGame() {
@@ -160,7 +160,7 @@ void WorldMap::playMap() {
                 sendMapObjectPositions(id);
 
 				//Ask for the rat movement
-				unsigned int movement[2];
+				int movement[2];
 				MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
 				Position goal(movement[0], movement[1]);
 
@@ -174,7 +174,7 @@ void WorldMap::playMap() {
                     rats[id] = pos;
                 }
 
-				gameOver = gameDone = (getMapObjectPositions(CHEESE).empty() || getMapObjectPositions(RAT).empty());
+				gameOver = isGameDone();
 		
                 //Return to the rat the result of the move request
 				int response[3] = { success, gameOver, isAlive };
@@ -213,7 +213,7 @@ void WorldMap::playMap() {
                 }
 
                 //Ask for the ratHunter movement
-                unsigned int movement[2];
+                int movement[2];
                 MPI_Recv(&movement, _countof(movement), MPI_INT, id, id, MPI_COMM_WORLD, MPI_STATUSES_IGNORE);
                 Position goal(movement[0], movement[1]);
 
@@ -231,7 +231,7 @@ void WorldMap::playMap() {
                     }
                 }
 
-				gameOver = gameDone = (getMapObjectPositions(RAT).empty() || getMapObjectPositions(CHEESE).empty());
+				gameOver = isGameDone();
 
                 //Return to the rat the result of the move request
                 int response[2] = { success, gameOver };

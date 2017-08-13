@@ -37,18 +37,18 @@ private:
 	bool moveCharacter(int, Position, Position, bool&);
 	void swapElements(Position, Position);
 	void findDoors();
+	int getRatIdFromPosition(Position pos);
+	vector<Position> getMapObjectPositions(MapObject object);
+	void sendMapObjectPositions(int id);
+	void sendRatsInPanic(int id);
+	vector<Position> getHunterScream(int id);
+	void sendInitialMapToCharacter(int id);
+	bool isGameDone();
+	bool isRatAlive(int id);
 
 public:
+	void displayMap();
     void playMap();
-    int getRatIdFromPosition(Position pos);
-    vector<Position> getMapObjectPositions(MapObject object);
-    void displayMap();
-    void sendMapObjectPositions(int id);
-    void sendRatsInPanic(int id);
-    vector<Position> getHunterScream(int id);
-    void sendInitialMapToCharacter(int id);
-    bool isGameDone();
-    bool isRatAlive(int id);
 	void endGame();
 };
 

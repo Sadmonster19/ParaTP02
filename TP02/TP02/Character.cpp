@@ -84,8 +84,8 @@ vector<Position> Character::getMapObjectPositions(MapObject object, int id) {
 void Character::displayMap() {
     string map{};
 
-    for (unsigned int y = 0; y < initialMap.size(); y++) {
-        for (unsigned int x = 0; x < initialMap[y].size(); x++) {
+    for (size_t y = 0; y < initialMap.size(); y++) {
+        for (size_t x = 0; x < initialMap[y].size(); x++) {
             switch (initialMap[y][x])
             {
             case WALL:
